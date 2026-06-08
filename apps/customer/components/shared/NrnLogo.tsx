@@ -43,7 +43,8 @@ export function NrnLogo({ size = 40, layoutId, splashMode = false, className }: 
       layoutId={layoutId}
       variants={containerVariants}
       className={className}
-      style={{ display: 'inline-flex', cursor: splashMode ? 'default' : 'default' }}
+      style={{ display: 'inline-flex', cursor: 'default' }}
+      transition={{ layout: { type: 'spring', stiffness: 180, damping: 28 } }}
     >
       <motion.svg
         xmlns="http://www.w3.org/2000/svg"

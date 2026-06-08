@@ -28,13 +28,13 @@ export function SplashScreen() {
         )}
       </AnimatePresence>
 
-      {/* Logo — layoutId triggers hero morph into the header on exit */}
+      {/* Logo — no exit prop so the wrapper unmounts instantly and the
+          layoutId hero animation fires cleanly toward the header logo */}
       <AnimatePresence>
         {visible && (
           <motion.div
             key="splash-logo"
             className="pointer-events-none fixed inset-0 z-[101] flex items-center justify-center"
-            exit={{ opacity: 0, transition: { duration: 0.35 } }}
           >
             <NrnLogo size={170} layoutId="nrn-logo" splashMode />
           </motion.div>
