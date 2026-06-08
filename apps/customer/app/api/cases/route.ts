@@ -44,12 +44,19 @@ export async function GET(request: Request) {
       .where('customerId', '==', customerId)
       .get();
 
-    let cases = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const all = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 
-    if (filter !== 'all') {
-      const allowed = new Set<string>(STATUS_GROUPS[filter]);
-      cases = cases.filter((c) => allowed.has((c as unknown as { status: string }).status));
-    }
+    // Compute counts from the full set before filtering
+    const counts = {
+      all: all.length,
+      active: all.filter((c) => new Set<string>(STATUS_GROUPS.active).has((c as unknown as { status: string }).status)).length,
+      pickup: all.filter((c) => new Set<string>(STATUS_GROUPS.pickup).has((c as unknown as { status: string }).status)).length,
+      closed: all.filter((c) => new Set<string>(STATUS_GROUPS.closed).has((c as unknown as { status: string }).status)).length,
+    };
+
+    let cases = filter === 'all'
+      ? all
+      : all.filter((c) => new Set<string>(STATUS_GROUPS[filter]).has((c as unknown as { status: string }).status));
 
     // Sort newest first
     cases.sort((a, b) => {
@@ -58,7 +65,7 @@ export async function GET(request: Request) {
       return bTs.localeCompare(aTs);
     });
 
-    return NextResponse.json({ cases });
+    return NextResponse.json({ cases, counts });
   } catch (err: unknown) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Failed to fetch cases' },

@@ -6,7 +6,14 @@ import { db } from '@/lib/firebase';
 import { Case } from '@nrn/shared';
 import api from '@/lib/axios';
 
-type FilterGroup = 'all' | 'active' | 'pickup' | 'closed';
+export type FilterGroup = 'all' | 'active' | 'pickup' | 'closed';
+
+export interface CaseCounts {
+  all: number;
+  active: number;
+  pickup: number;
+  closed: number;
+}
 
 export function useCase(caseId: string) {
   const [caseData, setCaseData] = useState<Case | null>(null);
@@ -30,6 +37,7 @@ export function useCase(caseId: string) {
 
 export function useCases(customerId?: string, workshopId?: string, filter: FilterGroup = 'all') {
   const [cases, setCases] = useState<Case[]>([]);
+  const [counts, setCounts] = useState<CaseCounts>({ all: 0, active: 0, pickup: 0, closed: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,22 +46,25 @@ export function useCases(customerId?: string, workshopId?: string, filter: Filte
       return;
     }
 
-    // For customer filtered views: call the API route which applies the filter server-side.
-    // For 'all' (or workshop queries): use onSnapshot for real-time updates.
-    if (customerId && filter !== 'all') {
+    // Customer queries always go through the API so we get counts alongside the filtered list.
+    if (customerId) {
       setLoading(true);
       api
-        .get<{ cases: Case[] }>(`/cases?customerId=${customerId}&filter=${filter}`)
-        .then((res) => setCases(res.data.cases))
-        .catch(() => setCases([]))
+        .get<{ cases: Case[]; counts: CaseCounts }>(`/cases?customerId=${customerId}&filter=${filter}`)
+        .then((res) => {
+          setCases(res.data.cases);
+          setCounts(res.data.counts);
+        })
+        .catch(() => {
+          setCases([]);
+        })
         .finally(() => setLoading(false));
       return;
     }
 
+    // Workshop queries keep onSnapshot for real-time order queue updates.
     const casesRef = collection(db, 'cases');
-    const q = customerId
-      ? query(casesRef, where('customerId', '==', customerId))
-      : query(casesRef, where('assignedWorkshopId', '==', workshopId));
+    const q = query(casesRef, where('assignedWorkshopId', '==', workshopId));
 
     setLoading(true);
     const unsub = onSnapshot(
@@ -75,5 +86,5 @@ export function useCases(customerId?: string, workshopId?: string, filter: Filte
     return unsub;
   }, [customerId, workshopId, filter]);
 
-  return { cases, loading };
+  return { cases, counts, loading };
 }

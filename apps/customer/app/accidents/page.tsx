@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { useCases } from '@/hooks/useCase';
+import { useCases, type FilterGroup } from '@/hooks/useCase';
 import { StatusBadge } from '@/components/case/StatusBadge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,6 @@ import { CaseStatus } from '@nrn/shared';
 import { formatDate, toDate } from '@nrn/shared';
 import { Car, ChevronRight, Plus, RotateCcw } from 'lucide-react';
 
-type FilterGroup = 'all' | 'active' | 'pickup' | 'closed';
 import { toast } from 'sonner';
 import api from '@/lib/axios';
 
@@ -28,7 +27,7 @@ export default function AccidentsPage() {
   const [resetting, setResetting] = useState(false);
   const [addingAccident, setAddingAccident] = useState(false);
   const [filter, setFilter] = useState<FilterGroup>('all');
-  const { cases, loading: casesLoading } = useCases(profile?.id, undefined, filter);
+  const { cases, counts, loading: casesLoading } = useCases(profile?.id, undefined, filter);
 
   const loading = authLoading || casesLoading;
 
@@ -106,13 +105,16 @@ export default function AccidentsPage() {
           <button
             key={key}
             onClick={() => setFilter(key)}
-            className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+            className={`shrink-0 rounded-full px-3 py-1 text-sm font-medium transition-colors ${
               filter === key
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:bg-muted/80'
             }`}
           >
             {label}
+            <span className={`ms-1.5 text-xs ${filter === key ? 'opacity-80' : 'opacity-60'}`}>
+              {counts[key]}
+            </span>
           </button>
         ))}
       </div>
