@@ -43,8 +43,8 @@ export function Header({ appName = 'NRN' }: HeaderProps) {
         </Button>
 
         {profile && (
-          <Button variant="ghost" size="icon" onClick={logout} title="Log out">
-            <LogOut className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={logout} title="Log out" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+            <LogOut className="h-4 w-4 rtl:rotate-180" />
           </Button>
         )}
       </div>
