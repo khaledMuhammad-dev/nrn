@@ -1,0 +1,13 @@
+{
+  "app": { "name": "NRN العميل" },
+  "nav": { "accidents": "حوادثي", "profile": "الملف الشخصي", "notifications": "الإشعارات", "logout": "تسجيل الخروج" },
+  "login": { "title": "مرحباً بعودتك", "subtitle": "تسجيل الدخول إلى حساب NRN", "email": "البريد الإلكتروني", "password": "كلمة المرور", "submit": "تسجيل الدخول", "error": "بريد إلكتروني أو كلمة مرور غير صحيحة" },
+  "accidents": { "title": "حوادثي", "empty": "لا توجد حوادث بعد", "findWorkshops": "البحث عن ورش", "openCase": "عرض الحالة" },
+  "status": { "label": "الحالة" },
+  "actions": { "cancel": "إلغاء", "confirm": "تأكيد", "back": "رجوع", "next": "التالي", "save": "حفظ" },
+  "workshops": { "title": "البحث عن ورشة", "verified": "معتمد من نجم", "selectWorkshop": "اختيار الورشة", "rating": "التقييم", "available": "متاح", "busy": "مشغول" },
+  "slots": { "title": "اختيار موعد", "confirm": "تأكيد الحجز", "selected": "الموعد المختار" },
+  "case": { "vehicle": "المركبة", "ref": "المرجع", "appointment": "الموعد", "workshop": "الورشة", "cancel": "إلغاء الحجز", "cancelReason": "سبب الإلغاء", "rate": "تقييم الورشة", "timeline": "مسار الحالة" },
+  "notifications": { "title": "الإشعارات", "empty": "لا توجد إشعارات", "markAllRead": "تحديد الكل كمقروء" },
+  "idle": { "title": "انتهت الجلسة", "message": "تم تسجيل خروجك بسبب 5 دقائق من عدم النشاط.", "redirect": "سيتم إعادة توجيهك خلال 10 ثوانٍ.", "stayLoggedIn": "البقاء مسجلاً", "logout": "تسجيل الخروج" }
+}

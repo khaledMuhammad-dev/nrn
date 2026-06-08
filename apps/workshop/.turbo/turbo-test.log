@@ -1,0 +1,34 @@
+$ jest
+PASS __tests__/api/transitions.test.ts
+  Workshop API — state machine transitions
+    accept: ASSIGNMENT_PENDING → APPOINTMENT_SCHEDULED
+      ✓ valid transition
+      ✓ already-scheduled case cannot be re-accepted
+    reject: ASSIGNMENT_PENDING → REJECTED_REASSIGN
+      ✓ valid transition
+      ✓ cannot reject from a non-pending state
+    receive: APPOINTMENT_SCHEDULED → VEHICLE_RECEIVED
+      ✓ valid transition
+      ✓ cannot skip vehicle received step
+    inspection: VEHICLE_RECEIVED → UNDER_INSPECTION
+      ✓ valid transition
+    estimate: UNDER_INSPECTION → ESTIMATE_PENDING
+      ✓ valid transition (1 ms)
+    start repair: ESTIMATE_APPROVED → REPAIR_IN_PROGRESS
+      ✓ valid transition
+      ✓ cannot start before estimate is approved
+    complete: REPAIR_IN_PROGRESS → REPAIR_COMPLETED
+      ✓ valid transition
+    ready: REPAIR_COMPLETED → READY_FOR_PICKUP
+      ✓ valid transition
+    deliver (handover): READY_FOR_PICKUP → DELIVERED
+      ✓ valid transition
+      ✓ cannot deliver from repair-in-progress
+    invoice: DELIVERED → INVOICE_PENDING
+      ✓ valid transition
+
+Test Suites: 1 passed, 1 total
+Tests:       15 passed, 15 total
+Snapshots:   0 total
+Time:        0.314 s
+Ran all test suites.

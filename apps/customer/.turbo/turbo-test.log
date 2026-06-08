@@ -1,0 +1,18 @@
+$ jest
+PASS __tests__/api/book.test.ts
+  Customer API — book route transitions
+    ✓ WORKSHOP_SELECTION → ASSIGNMENT_PENDING is valid (1 ms)
+    ✓ CLOSED → ASSIGNMENT_PENDING is invalid
+    ✓ CANCELLED → ASSIGNMENT_PENDING is invalid
+  Customer API — cancel route transitions
+    ✓ APPOINTMENT_SCHEDULED → CANCELLED is valid
+    ✓ CLOSED case cannot be cancelled
+    ✓ REPAIR_IN_PROGRESS case cannot be cancelled via customer route
+  Customer API — rate route (post-CLOSED)
+    ✓ CLOSED is a terminal status with no further transitions
+
+Test Suites: 1 passed, 1 total
+Tests:       7 passed, 7 total
+Snapshots:   0 total
+Time:        0.312 s
+Ran all test suites.

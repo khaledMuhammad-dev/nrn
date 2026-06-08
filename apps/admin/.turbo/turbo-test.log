@@ -1,0 +1,16 @@
+$ jest
+PASS __tests__/api/workshop.test.ts
+  Workshop Admin API — availability values
+    ✓ recognizes all valid availability statuses (1 ms)
+    ✓ rejects unknown availability status
+  Workshop Admin API — slot validation
+    ✓ valid slot passes validation (1 ms)
+    ✓ slot with end before start is invalid
+    ✓ slot with maxJobs=0 is invalid
+    ✓ slot with invalid date is invalid
+
+Test Suites: 1 passed, 1 total
+Tests:       6 passed, 6 total
+Snapshots:   0 total
+Time:        0.272 s
+Ran all test suites.

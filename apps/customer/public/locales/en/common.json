@@ -1,0 +1,13 @@
+{
+  "app": { "name": "NRN Customer" },
+  "nav": { "accidents": "My Accidents", "profile": "Profile", "notifications": "Notifications", "logout": "Log Out" },
+  "login": { "title": "Welcome Back", "subtitle": "Sign in to your NRN account", "email": "Email", "password": "Password", "submit": "Sign In", "error": "Invalid email or password" },
+  "accidents": { "title": "My Accidents", "empty": "No accidents yet", "findWorkshops": "Find Workshops", "openCase": "View Case" },
+  "status": { "label": "Status" },
+  "actions": { "cancel": "Cancel", "confirm": "Confirm", "back": "Back", "next": "Next", "save": "Save" },
+  "workshops": { "title": "Find a Workshop", "verified": "Najm Verified", "selectWorkshop": "Select Workshop", "rating": "Rating", "available": "Available", "busy": "Busy" },
+  "slots": { "title": "Pick a Slot", "confirm": "Confirm Booking", "selected": "Selected Slot" },
+  "case": { "vehicle": "Vehicle", "ref": "Reference", "appointment": "Appointment", "workshop": "Workshop", "cancel": "Cancel Booking", "cancelReason": "Reason for cancellation", "rate": "Rate Workshop", "timeline": "Case Timeline" },
+  "notifications": { "title": "Notifications", "empty": "No notifications", "markAllRead": "Mark all read" },
+  "idle": { "title": "Session Timeout", "message": "You were logged out due to 5 minutes of inactivity.", "redirect": "You will be redirected in 10 seconds.", "stayLoggedIn": "Stay Logged In", "logout": "Log Out" }
+}

@@ -1,0 +1,53 @@
+'use client';
+
+import { useTheme } from 'next-themes';
+import { useTranslation } from 'react-i18next';
+import { Sun, Moon, Globe, LogOut, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { NotificationBell } from './NotificationPanel';
+import { useAuth } from '@/hooks/useAuth';
+import { cn } from '@/lib/utils';
+
+interface HeaderProps {
+  appName?: string;
+}
+
+export function Header({ appName = 'NRN' }: HeaderProps) {
+  const { theme, setTheme } = useTheme();
+  const { i18n } = useTranslation();
+  const { user, profile, logout } = useAuth();
+
+  const toggleLang = () => {
+    const next = i18n.language === 'en' ? 'ar' : 'en';
+    i18n.changeLanguage(next);
+    document.documentElement.setAttribute('lang', next);
+    document.documentElement.setAttribute('dir', next === 'ar' ? 'rtl' : 'ltr');
+  };
+
+  return (
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-background px-4 shadow-sm">
+      <div className="flex items-center gap-2">
+        <div className="h-6 w-1 rounded-full bg-[var(--brand-accent)]" />
+        <span className="font-bold text-[var(--brand-primary)] dark:text-white">{appName}</span>
+      </div>
+
+      <div className="flex items-center gap-1">
+        {profile && <NotificationBell userId={profile.id} lang={i18n.language as 'en' | 'ar'} />}
+
+        <Button variant="ghost" size="icon" onClick={toggleLang} title="Toggle language">
+          <Globe className="h-4 w-4" />
+        </Button>
+
+        <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} title="Toggle theme">
+          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </Button>
+
+        {user && (
+          <Button variant="ghost" size="icon" onClick={logout} title="Log out">
+            <LogOut className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    </header>
+  );
+}
