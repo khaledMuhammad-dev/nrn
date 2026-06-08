@@ -8,28 +8,38 @@ export function SplashScreen() {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    // Paths finish staggering ~1.3s, hold 0.7s, then collapse
-    const t = setTimeout(() => setVisible(false), 2000);
+    // Paths stagger in ~1.1s, hold 0.7s, then exit
+    const t = setTimeout(() => setVisible(false), 1800);
     return () => clearTimeout(t);
   }, []);
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          key="splash"
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#33835c]"
-          exit={{
-            scale: 0.04,
-            opacity: 0,
-            transition: { duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] },
-          }}
-          // Collapse toward the header logo's position (px-4 left, h-14/2 top)
-          style={{ transformOrigin: '16px 14px' }}
-        >
-          <NrnLogo size={170} splashMode />
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <>
+      {/* Green backdrop — fades out independently */}
+      <AnimatePresence>
+        {visible && (
+          <motion.div
+            key="splash-bg"
+            className="fixed inset-0 z-[100] bg-[#33835c]"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.55, ease: 'easeInOut' }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Logo — layoutId triggers hero morph into the header on exit */}
+      <AnimatePresence>
+        {visible && (
+          <motion.div
+            key="splash-logo"
+            className="pointer-events-none fixed inset-0 z-[101] flex items-center justify-center"
+            exit={{ opacity: 0, transition: { duration: 0.35 } }}
+          >
+            <NrnLogo size={170} layoutId="nrn-logo" splashMode />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
