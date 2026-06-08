@@ -158,6 +158,26 @@ async function seedWorkshop() {
   console.log('  Slots seeded for next 14 days');
 }
 
+async function clearCollection(collectionName: string) {
+  const snap = await db.collection(collectionName).get();
+  if (snap.empty) return;
+  const batches: admin.firestore.WriteBatch[] = [];
+  let batch = db.batch();
+  let count = 0;
+  for (const doc of snap.docs) {
+    batch.delete(doc.ref);
+    count++;
+    if (count === 500) {
+      batches.push(batch);
+      batch = db.batch();
+      count = 0;
+    }
+  }
+  if (count > 0) batches.push(batch);
+  await Promise.all(batches.map((b) => b.commit()));
+  console.log(`  Cleared ${snap.size} docs from '${collectionName}'`);
+}
+
 async function seedCase(customerUid: string) {
   const caseDoc = {
     id: 'case_001',
@@ -194,7 +214,7 @@ async function seedCase(customerUid: string) {
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
   };
 
-  await db.collection('cases').doc('case_001').set(caseDoc, { merge: true });
+  await db.collection('cases').doc('case_001').set(caseDoc);
   console.log('  Case seeded: case_001');
 }
 
@@ -224,6 +244,12 @@ async function main() {
   console.log('🌱 Seeding NRN Demo data...\n');
   console.log('→ Enabling Email/Password auth...');
   await enableEmailPasswordAuth();
+  console.log('→ Clearing transient collections...');
+  await Promise.all([
+    clearCollection('estimates'),
+    clearCollection('invoices'),
+    clearCollection('notifications'),
+  ]);
   console.log('→ Seeding users...');
   const uids = await seedUsers();
   console.log('→ Seeding workshop...');

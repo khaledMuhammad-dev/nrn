@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { OpsLayout } from '@/components/layout/OpsLayout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,22 +27,36 @@ export default function ApprovalsPage() {
   const [loading, setLoading]     = useState(true);
   const [rejectReasons, setRejectReasons] = useState<Record<string, string>>({});
 
-  const fetchApprovals = async () => {
-    try {
-      const r = await api.get('/approvals');
-      setEstimates(r.data.data?.estimates ?? []);
-      setInvoices(r.data.data?.invoices   ?? []);
-    } catch {}
-    finally { setLoading(false); }
-  };
+  useEffect(() => {
+    let estReady = false;
+    let invReady = false;
+    const tryDone = () => { if (estReady && invReady) setLoading(false); };
 
-  useEffect(() => { fetchApprovals(); }, []);
+    const estUnsub = onSnapshot(
+      query(collection(db, 'estimates'), where('approvalStatus', '==', 'pending')),
+      (snap) => {
+        setEstimates(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Estimate)));
+        estReady = true; tryDone();
+      },
+      () => { estReady = true; tryDone(); },
+    );
+
+    const invUnsub = onSnapshot(
+      query(collection(db, 'invoices'), where('approvalStatus', '==', 'pending')),
+      (snap) => {
+        setInvoices(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Invoice)));
+        invReady = true; tryDone();
+      },
+      () => { invReady = true; tryDone(); },
+    );
+
+    return () => { estUnsub(); invUnsub(); };
+  }, []);
 
   const handleApproveEstimate = async (caseId: string) => {
     try {
       await api.post(`/cases/${caseId}/approve-estimate`);
       toast.success('Estimate approved!');
-      fetchApprovals();
     } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed'); }
   };
 
@@ -50,7 +66,6 @@ export default function ApprovalsPage() {
     try {
       await api.post(`/cases/${caseId}/reject-estimate`, { reason });
       toast.info('Estimate rejected');
-      fetchApprovals();
     } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed'); }
   };
 
@@ -58,7 +73,6 @@ export default function ApprovalsPage() {
     try {
       await api.post(`/cases/${caseId}/approve-invoice`);
       toast.success('Invoice approved — Case closed!');
-      fetchApprovals();
     } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed'); }
   };
 
