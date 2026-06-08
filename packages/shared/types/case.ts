@@ -65,6 +65,7 @@ export interface Case {
   auditLog: AuditEntry[];
   createdAt: Timestamp;
   updatedAt: Timestamp;
+  customerRating?: number;
 }
 
 export interface CapacityConfig {

@@ -27,7 +27,6 @@ export const HEADER_ICON_PATHS = {
   },
   logout: {
     door: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4',
-    doorOpen: 'M7 20H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2',
     chevron: 'M16 17L21 12L16 7',
     shaft: 'M21 12H9',
   },

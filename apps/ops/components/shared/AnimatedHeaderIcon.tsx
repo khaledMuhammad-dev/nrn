@@ -135,11 +135,12 @@ export function AnimatedHeaderIcon({ variant, size = 16, className }: AnimatedHe
     if (variant === 'logout' && arrowGroupRef.current) {
       const arrow = arrowGroupRef.current;
       gsap.set(arrow, { x: 0, opacity: 1 });
-      tweenRef.current = gsap
-        .timeline()
-        .to(arrow, { x: -12, opacity: 0.1, duration: 0.3, ease: 'power2.in' })
-        .to({}, { duration: 0.12 })
-        .to(arrow, { x: 0, opacity: 1, duration: 0.35, ease: 'back.out(2.5)' });
+      const tl = gsap.timeline();
+      tl.to(arrow, { x: 14, opacity: 0, duration: 0.3, ease: 'power2.in' }); // arrow exits right
+      tl.to({}, { duration: 0.15 }); // hold off-screen
+      tl.set(arrow, { x: -10 }); // wrap to left of door
+      tl.to(arrow, { x: 0, opacity: 1, duration: 0.35, ease: 'back.out(2)' }); // re-enter
+      tweenRef.current = tl;
     }
   }, [variant, killTween]);
 

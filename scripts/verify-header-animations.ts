@@ -106,13 +106,13 @@ async function testHarnessAnimations() {
   await page.mouse.move(0, 0);
   await page.waitForTimeout(150);
 
-  // Logout: arrow slides into door then returns
-  const logoutIn = await sampleMetrics(page, 'logout', 300);
+  // Logout: arrow exits right and fades, then returns to rest
+  const logoutIn = await sampleMetrics(page, 'logout', 400);
   if (logoutIn) {
     const l = logoutIn as { x: number; opacity: number };
-    check('logout-retract', l.x <= -10 && l.opacity < 0.5, `x=${l.x} opacity=${l.opacity}`);
+    check('logout-exit', l.x >= 10 && l.opacity < 0.5, `x=${l.x} opacity=${l.opacity}`);
   } else {
-    check('logout-retract', false, 'no metrics');
+    check('logout-exit', false, 'no metrics');
   }
   await page.mouse.move(0, 0);
   await page.waitForTimeout(150);
@@ -120,9 +120,9 @@ async function testHarnessAnimations() {
   const logoutOut = await sampleMetrics(page, 'logout', 900);
   if (logoutOut) {
     const l = logoutOut as { x: number; opacity: number };
-    check('logout-emerge', Math.abs(l.x) < 1 && l.opacity > 0.9, `x=${l.x} opacity=${l.opacity}`);
+    check('logout-return', Math.abs(l.x) < 1 && l.opacity > 0.9, `x=${l.x} opacity=${l.opacity}`);
   } else {
-    check('logout-emerge', false, 'no metrics');
+    check('logout-return', false, 'no metrics');
   }
 
   await browser.close();
