@@ -13,7 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { CaseStatus } from '@nrn/shared';
 import { formatDate, toDate } from '@nrn/shared';
-import { Car, ChevronRight, RotateCcw } from 'lucide-react';
+import { Car, ChevronRight, Plus, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/axios';
 
@@ -25,8 +25,23 @@ export default function AccidentsPage() {
   const lang = i18n.language as 'en' | 'ar';
   const [showStartOver, setShowStartOver] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [addingAccident, setAddingAccident] = useState(false);
 
   const loading = authLoading || casesLoading;
+
+  const handleAddAccident = async () => {
+    if (!profile?.id) return;
+    setAddingAccident(true);
+    try {
+      const res = await api.post('/cases', { customerId: profile.id });
+      toast.success(t('accidents.addSuccess'));
+      router.push(`/accidents/${res.data.caseId}/workshops`);
+    } catch {
+      toast.error(t('accidents.addFailed'));
+    } finally {
+      setAddingAccident(false);
+    }
+  };
 
   const handleStartOver = async () => {
     setResetting(true);
@@ -53,15 +68,26 @@ export default function AccidentsPage() {
     <div className="flex flex-col gap-3 p-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">{t('accidents.title')}</h1>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowStartOver(true)}
-          className="gap-1.5 text-muted-foreground"
-        >
-          <RotateCcw className="h-3.5 w-3.5" />
-          {t('actions.startOver')}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            onClick={handleAddAccident}
+            disabled={addingAccident}
+            className="gap-1.5"
+          >
+            <Plus className={`h-3.5 w-3.5 ${addingAccident ? 'animate-spin' : ''}`} />
+            {addingAccident ? '…' : t('accidents.addAccident')}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowStartOver(true)}
+            className="gap-1.5 text-muted-foreground"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            {t('actions.startOver')}
+          </Button>
+        </div>
       </div>
 
       {cases.length === 0 ? (

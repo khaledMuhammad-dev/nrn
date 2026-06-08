@@ -2,7 +2,7 @@
   "app": { "name": "NRN العميل" },
   "nav": { "accidents": "حوادثي", "profile": "الملف الشخصي", "notifications": "الإشعارات", "logout": "تسجيل الخروج" },
   "login": { "title": "مرحباً بعودتك", "subtitle": "تسجيل الدخول إلى حساب NRN", "email": "البريد الإلكتروني", "password": "كلمة المرور", "submit": "تسجيل الدخول", "error": "بريد إلكتروني أو كلمة مرور غير صحيحة" },
-  "accidents": { "title": "حوادثي", "empty": "لا توجد حوادث بعد", "findWorkshops": "البحث عن ورش", "openCase": "عرض الحالة", "ref": "المرجع" },
+  "accidents": { "title": "حوادثي", "empty": "لا توجد حوادث بعد", "findWorkshops": "البحث عن ورش", "openCase": "عرض الحالة", "ref": "المرجع", "addAccident": "إضافة حادث", "addSuccess": "تم إنشاء حالة حادث جديدة!", "addFailed": "فشل إنشاء الحادث. حاول مجدداً." },
   "status": {
     "label": "الحالة",
     "ACCIDENT_REPORTED": "تم الإبلاغ عن الحادث",

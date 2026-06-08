@@ -2,7 +2,7 @@
   "app": { "name": "NRN Customer" },
   "nav": { "accidents": "My Accidents", "profile": "Profile", "notifications": "Notifications", "logout": "Log Out" },
   "login": { "title": "Welcome Back", "subtitle": "Sign in to your NRN account", "email": "Email", "password": "Password", "submit": "Sign In", "error": "Invalid email or password" },
-  "accidents": { "title": "My Accidents", "empty": "No accidents yet", "findWorkshops": "Find Workshops", "openCase": "View Case", "ref": "Ref" },
+  "accidents": { "title": "My Accidents", "empty": "No accidents yet", "findWorkshops": "Find Workshops", "openCase": "View Case", "ref": "Ref", "addAccident": "Add Accident", "addSuccess": "New accident case created!", "addFailed": "Failed to create accident. Please try again." },
   "status": {
     "label": "Status",
     "ACCIDENT_REPORTED": "Accident Reported",
