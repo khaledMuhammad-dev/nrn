@@ -6,14 +6,15 @@ import { Briefcase, Bell, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 
-const navItems = [
-  { href: '/orders',        icon: Briefcase, label: 'Orders' },
-  { href: '/notifications', icon: Bell,      label: 'Alerts' },
-  { href: '/profile',       icon: User,      label: 'Profile' },
-];
-
 export function BottomNav() {
   const pathname = usePathname();
+  const { t } = useTranslation();
+
+  const navItems = [
+    { href: '/orders',        icon: Briefcase, label: t('nav.orders') },
+    { href: '/notifications', icon: Bell,      label: t('nav.notifications') },
+    { href: '/profile',       icon: User,      label: t('nav.profile') },
+  ];
 
   return (
     <nav className="sticky bottom-0 left-0 right-0 z-30 flex h-16 items-center justify-around border-t bg-background">

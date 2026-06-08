@@ -2,17 +2,13 @@
 
 import { useTheme } from 'next-themes';
 import { useTranslation } from 'react-i18next';
-import { Sun, Moon, Globe, LogOut, User } from 'lucide-react';
+import { Sun, Moon, Globe, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NotificationBell } from './NotificationPanel';
+import { NrnLogo } from '@/components/shared/NrnLogo';
 import { useAuth } from '@/hooks/useAuth';
-import { cn } from '@/lib/utils';
 
-interface HeaderProps {
-  appName?: string;
-}
-
-export function Header({ appName = 'NRN' }: HeaderProps) {
+export function Header() {
   const { theme, setTheme } = useTheme();
   const { i18n } = useTranslation();
   const { profile, logout } = useAuth();
@@ -27,8 +23,7 @@ export function Header({ appName = 'NRN' }: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-background px-4 shadow-sm">
       <div className="flex items-center gap-2">
-        <div className="h-6 w-1 rounded-full bg-[var(--brand-accent)]" />
-        <span className="font-bold text-[var(--brand-primary)] dark:text-white">{appName}</span>
+        <NrnLogo size={28} />
       </div>
 
       <div className="flex items-center gap-1">

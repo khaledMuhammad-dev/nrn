@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --brand-primary: #1A3C5E;
+    --brand-primary: #33835c;
     --brand-accent:  #F0A500;
     --status-active: #3B82F6;
     --status-done:   #22C55E;
@@ -36,7 +36,7 @@
   }
 
   .dark {
-    --brand-primary: #2563EB;
+    --brand-primary: #4aba85;
     --background:    222.2 84% 4.9%;
     --foreground:    210 40% 98%;
     --card:          222.2 84% 4.9%;
