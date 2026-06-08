@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { doc, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Case } from '@nrn/shared';
+import api from '@/lib/axios';
+
+type FilterGroup = 'all' | 'active' | 'pickup' | 'closed';
 
 export function useCase(caseId: string) {
   const [caseData, setCaseData] = useState<Case | null>(null);
@@ -25,31 +28,38 @@ export function useCase(caseId: string) {
   return { caseData, loading };
 }
 
-export function useCases(customerId?: string, workshopId?: string) {
+export function useCases(customerId?: string, workshopId?: string, filter: FilterGroup = 'all') {
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Don't subscribe until we have an ID — avoids unfiltered queries and premature loading state
     if (!customerId && !workshopId) {
       setLoading(false);
       return;
     }
 
-    const casesRef = collection(db, 'cases');
-    let q;
-    if (customerId) {
-      q = query(casesRef, where('customerId', '==', customerId));
-    } else {
-      q = query(casesRef, where('assignedWorkshopId', '==', workshopId));
+    // For customer filtered views: call the API route which applies the filter server-side.
+    // For 'all' (or workshop queries): use onSnapshot for real-time updates.
+    if (customerId && filter !== 'all') {
+      setLoading(true);
+      api
+        .get<{ cases: Case[] }>(`/cases?customerId=${customerId}&filter=${filter}`)
+        .then((res) => setCases(res.data.cases))
+        .catch(() => setCases([]))
+        .finally(() => setLoading(false));
+      return;
     }
+
+    const casesRef = collection(db, 'cases');
+    const q = customerId
+      ? query(casesRef, where('customerId', '==', customerId))
+      : query(casesRef, where('assignedWorkshopId', '==', workshopId));
 
     setLoading(true);
     const unsub = onSnapshot(
       q,
       (snap) => {
         const all = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Case));
-        // Sort client-side to avoid needing Firestore composite indexes
         all.sort((a, b) => {
           const aTime = typeof a.createdAt === 'object' && 'seconds' in (a.createdAt as object)
             ? (a.createdAt as { seconds: number }).seconds : 0;
@@ -60,13 +70,10 @@ export function useCases(customerId?: string, workshopId?: string) {
         setCases(all);
         setLoading(false);
       },
-      (_err) => {
-        // On error (security rules, missing index) stop the skeleton
-        setLoading(false);
-      },
+      (_err) => setLoading(false),
     );
     return unsub;
-  }, [customerId, workshopId]);
+  }, [customerId, workshopId, filter]);
 
   return { cases, loading };
 }

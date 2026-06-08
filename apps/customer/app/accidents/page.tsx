@@ -13,32 +13,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { CaseStatus } from '@nrn/shared';
 import { formatDate, toDate } from '@nrn/shared';
+import { Car, ChevronRight, Plus, RotateCcw } from 'lucide-react';
 
 type FilterGroup = 'all' | 'active' | 'pickup' | 'closed';
-
-const ACTIVE_STATUSES = new Set([
-  CaseStatus.WORKSHOP_SELECTION,
-  CaseStatus.ASSIGNMENT_PENDING,
-  CaseStatus.REJECTED_REASSIGN,
-  CaseStatus.APPOINTMENT_SCHEDULED,
-  CaseStatus.VEHICLE_RECEIVED,
-  CaseStatus.UNDER_INSPECTION,
-  CaseStatus.ESTIMATE_PENDING,
-  CaseStatus.ESTIMATE_APPROVED,
-  CaseStatus.PARTS_PENDING,
-  CaseStatus.REPAIR_IN_PROGRESS,
-  CaseStatus.REPAIR_COMPLETED,
-]);
-
-const PICKUP_STATUSES = new Set([CaseStatus.READY_FOR_PICKUP]);
-
-const CLOSED_STATUSES = new Set([
-  CaseStatus.DELIVERED,
-  CaseStatus.INVOICE_PENDING,
-  CaseStatus.CLOSED,
-  CaseStatus.CANCELLED,
-]);
-import { Car, ChevronRight, Plus, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/axios';
 
@@ -46,12 +23,12 @@ export default function AccidentsPage() {
   const router = useRouter();
   const { t, i18n } = useTranslation();
   const { profile, loading: authLoading } = useAuth();
-  const { cases, loading: casesLoading } = useCases(profile?.id);
   const lang = i18n.language as 'en' | 'ar';
   const [showStartOver, setShowStartOver] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [addingAccident, setAddingAccident] = useState(false);
   const [filter, setFilter] = useState<FilterGroup>('all');
+  const { cases, loading: casesLoading } = useCases(profile?.id, undefined, filter);
 
   const loading = authLoading || casesLoading;
 
@@ -61,14 +38,6 @@ export default function AccidentsPage() {
     { key: 'pickup', label: t('accidents.filterPickup') },
     { key: 'closed', label: t('accidents.filterClosed') },
   ];
-
-  const filteredCases = cases.filter((c) => {
-    const s = c.status as CaseStatus;
-    if (filter === 'active') return ACTIVE_STATUSES.has(s);
-    if (filter === 'pickup') return PICKUP_STATUSES.has(s);
-    if (filter === 'closed') return CLOSED_STATUSES.has(s);
-    return true;
-  });
 
   const handleAddAccident = async () => {
     if (!profile?.id) return;
@@ -132,7 +101,7 @@ export default function AccidentsPage() {
       </div>
 
       {/* Filter strip */}
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none pb-6">
         {FILTERS.map(({ key, label }) => (
           <button
             key={key}
@@ -144,28 +113,17 @@ export default function AccidentsPage() {
             }`}
           >
             {label}
-            {key !== 'all' && (
-              <span className="ms-1.5 text-xs opacity-70">
-                {cases.filter((c) => {
-                  const s = c.status as CaseStatus;
-                  if (key === 'active') return ACTIVE_STATUSES.has(s);
-                  if (key === 'pickup') return PICKUP_STATUSES.has(s);
-                  if (key === 'closed') return CLOSED_STATUSES.has(s);
-                  return true;
-                }).length}
-              </span>
-            )}
           </button>
         ))}
       </div>
 
-      {filteredCases.length === 0 ? (
+      {cases.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-16 text-center">
           <Car className="h-12 w-12 text-muted-foreground" />
           <p className="text-muted-foreground">{t('accidents.empty')}</p>
         </div>
       ) : (
-        filteredCases.map((c, idx) => (
+        cases.map((c, idx) => (
           <motion.div
             key={c.id}
             initial={{ opacity: 0, y: 20 }}

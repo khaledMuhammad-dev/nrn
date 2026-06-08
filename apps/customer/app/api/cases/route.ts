@@ -1,5 +1,71 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebaseAdmin';
+import { CaseStatus } from '@nrn/shared';
+
+type FilterGroup = 'all' | 'active' | 'pickup' | 'closed';
+
+const STATUS_GROUPS: Record<Exclude<FilterGroup, 'all'>, CaseStatus[]> = {
+  active: [
+    CaseStatus.WORKSHOP_SELECTION,
+    CaseStatus.ASSIGNMENT_PENDING,
+    CaseStatus.REJECTED_REASSIGN,
+    CaseStatus.APPOINTMENT_SCHEDULED,
+    CaseStatus.VEHICLE_RECEIVED,
+    CaseStatus.UNDER_INSPECTION,
+    CaseStatus.ESTIMATE_PENDING,
+    CaseStatus.ESTIMATE_APPROVED,
+    CaseStatus.PARTS_PENDING,
+    CaseStatus.REPAIR_IN_PROGRESS,
+    CaseStatus.REPAIR_COMPLETED,
+  ],
+  pickup: [CaseStatus.READY_FOR_PICKUP],
+  closed: [
+    CaseStatus.DELIVERED,
+    CaseStatus.INVOICE_PENDING,
+    CaseStatus.CLOSED,
+    CaseStatus.CANCELLED,
+  ],
+};
+
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const customerId = searchParams.get('customerId');
+    const filter = (searchParams.get('filter') ?? 'all') as FilterGroup;
+
+    if (!customerId) {
+      return NextResponse.json({ error: 'customerId required' }, { status: 400 });
+    }
+
+    // Fetch all cases for this customer server-side, then filter by status group.
+    // Avoids composite index requirements while keeping filter logic off the client.
+    const snap = await adminDb
+      .collection('cases')
+      .where('customerId', '==', customerId)
+      .get();
+
+    let cases = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+
+    if (filter !== 'all') {
+      const allowed = new Set<string>(STATUS_GROUPS[filter]);
+      cases = cases.filter((c) => allowed.has((c as unknown as { status: string }).status));
+    }
+
+    // Sort newest first
+    cases.sort((a, b) => {
+      const aTs = (a as { createdAt?: string }).createdAt ?? '';
+      const bTs = (b as { createdAt?: string }).createdAt ?? '';
+      return bTs.localeCompare(aTs);
+    });
+
+    return NextResponse.json({ cases });
+  } catch (err: unknown) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Failed to fetch cases' },
+      { status: 500 },
+    );
+  }
+}
 
 const MAKES = [
   { make: 'Toyota', models: ['Camry', 'Corolla', 'Land Cruiser', 'RAV4', 'Hilux'] },
