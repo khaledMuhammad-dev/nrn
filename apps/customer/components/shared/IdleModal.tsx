@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Clock } from 'lucide-react';
 
@@ -11,6 +12,8 @@ interface IdleModalProps {
 }
 
 export function IdleModal({ show, onDismiss, onLogout }: IdleModalProps) {
+  const { t } = useTranslation();
+
   return (
     <AnimatePresence>
       {show && (
@@ -31,19 +34,15 @@ export function IdleModal({ show, onDismiss, onLogout }: IdleModalProps) {
                 <Clock className="h-8 w-8 text-amber-600" />
               </div>
             </div>
-            <h2 className="mb-2 text-xl font-bold">Session Timeout</h2>
-            <p className="mb-1 text-gray-600 dark:text-gray-400">
-              You were logged out due to <strong>5 minutes of inactivity</strong>.
-            </p>
-            <p className="mb-6 text-sm text-gray-500">
-              You will be redirected to the login page in 10 seconds.
-            </p>
+            <h2 className="mb-2 text-xl font-bold">{t('idle.title')}</h2>
+            <p className="mb-1 text-gray-600 dark:text-gray-400">{t('idle.message')}</p>
+            <p className="mb-6 text-sm text-gray-500">{t('idle.redirect')}</p>
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1" onClick={onDismiss}>
-                Stay Logged In
+                {t('idle.stayLoggedIn')}
               </Button>
               <Button variant="destructive" className="flex-1" onClick={onLogout}>
-                Log Out
+                {t('idle.logout')}
               </Button>
             </div>
           </motion.div>

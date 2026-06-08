@@ -40,7 +40,16 @@
     "notFound": "Case not found",
     "auditLog": "Audit Log",
     "documents": "Documents",
-    "slaPanel": "SLA Timers"
+    "slaPanel": "SLA Timers",
+    "make": "Make",
+    "model": "Model",
+    "year": "Year",
+    "ref": "Ref",
+    "noSlaTimers": "No SLA timers",
+    "timeline": "Case Timeline",
+    "by": "by",
+    "system": "System",
+    "unknownUser": "Unknown"
   },
   "approvals": {
     "title": "Approval Queue",
