@@ -99,19 +99,19 @@ ACCIDENT_REPORTED → WORKSHOP_SELECTION → ASSIGNMENT_PENDING
 
 This monorepo ships four separate Next.js apps. Deploy **one Netlify site per app**, all connected to the same Git repository.
 
-| Surface | Base directory | Package filter |
-|---------|----------------|----------------|
-| Customer | `apps/customer` | `@nrn/customer` |
-| Workshop | `apps/workshop` | `@nrn/workshop` |
-| Admin | `apps/admin` | `@nrn/admin` |
-| Ops | `apps/ops` | `@nrn/ops` |
+| Surface | Config path | Package filter |
+|---------|-------------|----------------|
+| Customer | `apps/customer/netlify.toml` | `@nrn/customer` |
+| Workshop | `apps/workshop/netlify.toml` | `@nrn/workshop` |
+| Admin | `apps/admin/netlify.toml` | `@nrn/admin` |
+| Ops | `apps/ops/netlify.toml` | `@nrn/ops` |
 
-Each app folder includes a `netlify.toml` with the build command, Node/pnpm versions, and the Next.js plugin.
+Each app folder includes a `netlify.toml` with repo-root build paths, Node/pnpm versions, and the Next.js plugin.
 
 ### Setup (repeat for each site)
 
 1. In [Netlify](https://app.netlify.com), **Add new site → Import an existing project** and connect this repo.
-2. Set **Base directory** to the app path (e.g. `apps/customer`). Netlify reads that app’s `netlify.toml`.
+2. Leave **Base directory** empty (repo root). Point the site at the app’s config (e.g. set **Package directory** / monorepo path to `apps/admin` so Netlify loads `apps/admin/netlify.toml`).
 3. Under **Site settings → Environment variables**, add every variable from `.env.example`:
    - `NEXT_PUBLIC_FIREBASE_API_KEY`
    - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`

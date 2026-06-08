@@ -1,6 +1,6 @@
 [build]
-  command = "cd ../.. && pnpm install && pnpm turbo run build --filter=@nrn/customer"
-  publish = ".next"
+  command = "pnpm install && pnpm turbo run build --filter=@nrn/customer"
+  publish = "apps/customer/.next"
 
 [build.environment]
   NODE_VERSION = "22"
