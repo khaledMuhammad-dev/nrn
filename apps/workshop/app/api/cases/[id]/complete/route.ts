@@ -7,6 +7,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!decoded) return jsonError('Unauthorized', 401);
   const { id } = await params;
   try {
+    // Work order completion: REPAIR_IN_PROGRESS → REPAIR_COMPLETED → READY_FOR_PICKUP
+    await transitionCase({
+      caseId:    id,
+      actorId:   decoded.uid,
+      actorRole: UserRole.ADVISOR,
+      toStatus:  CaseStatus.REPAIR_COMPLETED,
+    });
     const updated = await transitionCase({
       caseId:    id,
       actorId:   decoded.uid,
