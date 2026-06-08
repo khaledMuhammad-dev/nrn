@@ -30,7 +30,7 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
     <OpsLayout>
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => router.push('/cases')}><ArrowLeft className="h-5 w-5" /></Button>
+          <Button variant="ghost" size="icon" onClick={() => router.push('/cases')}><ArrowLeft className="h-5 w-5 rtl:rotate-180" /></Button>
           <h1 className="text-2xl font-bold">Case {id}</h1>
           <StatusBadge status={status} />
         </div>

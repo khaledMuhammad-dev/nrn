@@ -151,7 +151,7 @@ export default function OrdersPage() {
                   )}
                 </div>
               </div>
-              <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground" />
+              <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground rtl:rotate-180" />
             </div>
           </Card>
         </motion.div>

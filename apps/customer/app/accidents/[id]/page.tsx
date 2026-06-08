@@ -69,7 +69,7 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
     <div className="flex flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" onClick={() => router.push('/accidents')}>
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5 rtl:rotate-180" />
         </Button>
         <h1 className="text-lg font-bold">{t('case.title', { id: id.slice(0, 8) })}</h1>
       </div>

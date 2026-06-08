@@ -106,7 +106,7 @@ export default function AccidentsPage() {
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  <ChevronRight className="h-5 w-5 text-muted-foreground rtl:rotate-180" />
                   {c.status === CaseStatus.WORKSHOP_SELECTION && (
                     <Button
                       size="sm"

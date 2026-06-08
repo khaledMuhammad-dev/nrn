@@ -40,7 +40,7 @@ export default function WorkshopDetailPage({ params }: { params: { id: string; w
     <div className="flex flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5 rtl:rotate-180" />
         </Button>
         <h1 className="text-lg font-bold">{workshop.name}</h1>
       </div>

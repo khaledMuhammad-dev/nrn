@@ -41,7 +41,7 @@ export default function WorkshopsPage({ params }: { params: { id: string } }) {
     <div className="flex flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5 rtl:rotate-180" />
         </Button>
         <h1 className="text-lg font-bold">{t('workshops.title')}</h1>
       </div>
@@ -114,7 +114,7 @@ export default function WorkshopsPage({ params }: { params: { id: string } }) {
                     </Badge>
                   </div>
                 </div>
-                <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground" />
+                <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground rtl:rotate-180" />
               </div>
             </Card>
           </motion.div>

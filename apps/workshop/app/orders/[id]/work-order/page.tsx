@@ -56,7 +56,7 @@ export default function WorkOrderPage({ params }: { params: { id: string } }) {
     <div className="flex flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5 rtl:rotate-180" />
         </Button>
         <h1 className="text-lg font-bold">{t('order.checklist')}</h1>
       </div>
