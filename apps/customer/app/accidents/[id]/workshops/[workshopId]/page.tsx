@@ -3,23 +3,33 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Workshop } from '@nrn/shared';
-import { Star, MapPin, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Star, MapPin, ArrowLeft, ShieldCheck, CalendarCheck } from 'lucide-react';
 import api from '@/lib/axios';
 
 export default function WorkshopDetailPage({ params }: { params: { id: string; workshopId: string } }) {
   const { id, workshopId } = params;
   const router = useRouter();
-  const [workshop, setWorkshop] = useState<Workshop | null>(null);
-  const [loading, setLoading]   = useState(true);
+  const { t } = useTranslation();
+  const [workshop, setWorkshop]     = useState<Workshop | null>(null);
+  const [totalSlots, setTotalSlots] = useState<number | null>(null);
+  const [loading, setLoading]       = useState(true);
 
   useEffect(() => {
-    api.get(`/workshops/${workshopId}`)
-      .then((r) => setWorkshop(r.data.data))
+    Promise.all([
+      api.get(`/workshops/${workshopId}`),
+      api.get(`/workshops/${workshopId}/slots`),
+    ])
+      .then(([workshopRes, slotsRes]) => {
+        setWorkshop(workshopRes.data.data);
+        const slots: { capacity: number; bookedCount: number }[] = slotsRes.data.data ?? [];
+        setTotalSlots(slots.reduce((sum, s) => sum + Math.max(0, s.capacity - s.bookedCount), 0));
+      })
       .finally(() => setLoading(false));
   }, [workshopId]);
 
@@ -49,6 +59,17 @@ export default function WorkshopDetailPage({ params }: { params: { id: string; w
                 <Star className="h-4 w-4 fill-current" />
                 <span className="font-semibold">{workshop.rating.toFixed(1)}</span>
               </div>
+              <div className="mt-2 flex items-center gap-2 text-sm">
+                <CalendarCheck className="h-4 w-4 text-[var(--brand-primary)]" />
+                {totalSlots === null
+                  ? <Skeleton className="h-4 w-24" />
+                  : totalSlots === 0
+                    ? <span className="text-muted-foreground">{t('workshops.noSlots')}</span>
+                    : <span className="font-medium text-[var(--brand-primary)]">
+                        {t('workshops.slotsAvailable', { count: totalSlots })}
+                      </span>
+                }
+              </div>
             </div>
           </div>
           <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
@@ -73,7 +94,7 @@ export default function WorkshopDetailPage({ params }: { params: { id: string; w
       {/* Services */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Services</CardTitle>
+          <CardTitle className="text-base">{t('workshops.services')}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
           {workshop.services.map((s) => (
@@ -89,7 +110,7 @@ export default function WorkshopDetailPage({ params }: { params: { id: string; w
         onClick={() => router.push(`/accidents/${id}/slots?workshopId=${workshopId}`)}
         className="w-full"
       >
-        Select Workshop
+        {t('workshops.selectWorkshop')}
       </Button>
     </div>
   );

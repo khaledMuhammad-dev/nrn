@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { NrnLogo } from '@/components/shared/NrnLogo';
 
 const schema = z.object({
   email:    z.string().email('Invalid email address'),
@@ -44,7 +45,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[var(--brand-primary)] to-blue-900 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[var(--brand-primary)] to-[#1a5c3a] p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -52,11 +53,11 @@ export default function LoginPage() {
         className="w-full max-w-sm"
       >
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--brand-accent)]">
-            <span className="text-2xl font-black text-white">NRN</span>
+          <div className="mb-3 flex justify-center">
+            <NrnLogo size={64} />
           </div>
           <h1 className="text-2xl font-bold text-white">Najm Repair Network</h1>
-          <p className="text-blue-200">Customer Portal</p>
+          <p className="text-green-200">Customer Portal</p>
         </div>
 
         <Card>

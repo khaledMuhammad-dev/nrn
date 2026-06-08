@@ -7,7 +7,7 @@ export default function AccidentsLayout({ children }: { children: React.ReactNod
   return (
     <AuthGuard requiredRole={UserRole.CUSTOMER}>
       <div className="flex min-h-screen flex-col" style={{ maxWidth: 390, margin: '0 auto' }}>
-        <Header appName="NRN Customer" />
+        <Header />
         <main className="flex-1 overflow-y-auto pb-20">{children}</main>
         <BottomNav />
       </div>

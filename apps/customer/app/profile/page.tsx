@@ -14,7 +14,7 @@ export default function ProfilePage() {
   return (
     <AuthGuard requiredRole={UserRole.CUSTOMER}>
       <div className="flex min-h-screen flex-col" style={{ maxWidth: 390, margin: '0 auto' }}>
-        <Header appName="NRN Customer" />
+        <Header />
         <main className="flex-1 overflow-y-auto p-4 pb-20">
           <Card>
             <CardHeader>

@@ -5,7 +5,7 @@
   "accidents": { "title": "حوادثي", "empty": "لا توجد حوادث بعد", "findWorkshops": "البحث عن ورش", "openCase": "عرض الحالة" },
   "status": { "label": "الحالة" },
   "actions": { "cancel": "إلغاء", "confirm": "تأكيد", "back": "رجوع", "next": "التالي", "save": "حفظ" },
-  "workshops": { "title": "البحث عن ورشة", "verified": "معتمد من نجم", "selectWorkshop": "اختيار الورشة", "rating": "التقييم", "available": "متاح", "busy": "مشغول" },
+  "workshops": { "title": "البحث عن ورشة", "verified": "معتمد من نجم", "selectWorkshop": "اختيار الورشة", "rating": "التقييم", "available": "متاح", "busy": "مشغول", "services": "الخدمات", "slotsAvailable": "{{count}} موعد متاح", "noSlots": "لا توجد مواعيد متاحة" },
   "slots": { "title": "اختيار موعد", "confirm": "تأكيد الحجز", "selected": "الموعد المختار" },
   "case": { "vehicle": "المركبة", "ref": "المرجع", "appointment": "الموعد", "workshop": "الورشة", "cancel": "إلغاء الحجز", "cancelReason": "سبب الإلغاء", "rate": "تقييم الورشة", "timeline": "مسار الحالة" },
   "notifications": { "title": "الإشعارات", "empty": "لا توجد إشعارات", "markAllRead": "تحديد الكل كمقروء" },
