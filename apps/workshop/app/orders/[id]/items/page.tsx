@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +17,7 @@ import api from '@/lib/axios';
 export default function ItemsPage({ params }: { params: { id: string } }) {
   const { id }    = params;
   const router    = useRouter();
+  const { t }     = useTranslation();
   const [parts, setParts]     = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch]   = useState('');
@@ -37,11 +39,6 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
     });
   };
 
-  const subtotal = Array.from(cart.entries()).reduce((sum, [partId, qty]) => {
-    const part = parts.find((p) => p.id === partId);
-    return sum + (part?.unitPrice ?? 0) * qty;
-  }, 0);
-
   const handleDone = () => {
     // Store in sessionStorage for the review page
     const lineItems: EstimateLineItem[] = Array.from(cart.entries()).map(([partId, qty]) => {
@@ -58,13 +55,13 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-lg font-bold">Add Items</h1>
+        <h1 className="text-lg font-bold">{t('order.addItems')}</h1>
       </div>
 
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search parts catalog..."
+          placeholder={t('order.search')}
           className="pl-9"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -81,10 +78,9 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">{part.description}</span>
-                  {!part.inStock && <Badge variant="warn" className="text-xs">Out of stock</Badge>}
+                  {/* {!part.inStock && <Badge variant="warn" className="text-xs">{t('order.outOfStock')}</Badge>} */}
                 </div>
                 <p className="font-mono text-xs text-muted-foreground">{part.partNumber}</p>
-                <p className="text-sm font-semibold text-[var(--brand-primary)]">SAR {part.unitPrice.toLocaleString()}</p>
               </div>
               <div className="flex items-center gap-2">
                 {qty > 0 ? (
@@ -99,7 +95,7 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
                   </>
                 ) : (
                   <Button size="sm" variant="brand" onClick={() => setQty(part.id, 1)}>
-                    <Plus className="mr-1 h-3 w-3" /> Add
+                    <Plus className="mr-1 h-3 w-3" /> {t('order.addToOrder')}
                   </Button>
                 )}
               </div>
@@ -111,12 +107,9 @@ export default function ItemsPage({ params }: { params: { id: string } }) {
       {/* Sticky Footer */}
       {cart.size > 0 && (
         <div className="fixed bottom-16 left-0 right-0 mx-auto flex max-w-[390px] items-center justify-between border-t bg-background p-4">
-          <div>
-            <p className="text-xs text-muted-foreground">{cart.size} items</p>
-            <p className="font-bold">SAR {subtotal.toLocaleString()}</p>
-          </div>
+          <p className="text-xs text-muted-foreground">{cart.size} {t('order.addItems')}</p>
           <Button variant="brand" onClick={handleDone}>
-            <ShoppingCart className="mr-2 h-4 w-4" /> Review
+            <ShoppingCart className="mr-2 h-4 w-4" /> {t('order.reviewSubmit')}
           </Button>
         </div>
       )}

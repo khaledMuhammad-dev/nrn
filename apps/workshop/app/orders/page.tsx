@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { useCases } from '@/hooks/useCase';
 import { StatusBadge } from '@/components/case/StatusBadge';
@@ -21,6 +22,7 @@ import { cn } from '@/lib/utils';
 
 export default function OrdersPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { profile } = useAuth();
   const { cases, loading } = useCases(profile?.workshopId ?? undefined);
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
@@ -32,10 +34,10 @@ export default function OrdersPage() {
   const pendingAssignment = cases.find((c) => c.status === CaseStatus.ASSIGNMENT_PENDING);
 
   const FILTERS = [
-    { value: 'all', label: 'All' },
-    { value: 'active', label: 'Under Service' },
-    { value: 'parts', label: 'Parts' },
-    { value: 'pickup', label: 'Pickup' },
+    { value: 'all',    label: t('orders.tabs.all') },
+    { value: 'active', label: t('orders.tabs.underService') },
+    { value: 'parts',  label: t('orders.tabs.pendingParts') },
+    { value: 'pickup', label: t('orders.tabs.readyPickup') },
   ];
 
   const filtered = cases.filter((c) => {
@@ -50,7 +52,7 @@ export default function OrdersPage() {
     setProcessing(true);
     try {
       await api.post(`/cases/${selectedCase.id}/accept`);
-      toast.success('Order accepted!');
+      toast.success(t('orders.accept'));
       setSelectedCase(null);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Failed');
@@ -64,7 +66,7 @@ export default function OrdersPage() {
     setProcessing(true);
     try {
       await api.post(`/cases/${selectedCase.id}/reject`, { reason: rejectReason });
-      toast.info('Order rejected');
+      toast.info(t('orders.reject'));
       setSelectedCase(null);
       setRejectReason('');
       setShowReject(false);
@@ -83,7 +85,7 @@ export default function OrdersPage() {
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <h1 className="text-xl font-bold">Orders</h1>
+      <h1 className="text-xl font-bold">{t('orders.title')}</h1>
 
       {/* Filters */}
       <div className="flex gap-2 overflow-x-auto pb-1">
@@ -114,10 +116,10 @@ export default function OrdersPage() {
             >
               <div className="mb-2 flex items-center gap-2 text-[var(--brand-accent)]">
                 <Car className="h-5 w-5" />
-                <span className="font-bold">New Car from Najm!</span>
+                <span className="font-bold">{t('orders.newAssignmentSubtitle')}</span>
               </div>
               <p className="text-sm">{pendingAssignment.vehicle.make} {pendingAssignment.vehicle.model} — {pendingAssignment.vehicle.plate}</p>
-              <p className="text-xs text-muted-foreground">Tap to review</p>
+              <p className="text-xs text-muted-foreground">{t('orders.newAssignment')}</p>
             </Card>
           </motion.div>
         )}
@@ -171,12 +173,12 @@ export default function OrdersPage() {
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
               className="w-full rounded-t-2xl bg-background p-6"
             >
-              <h2 className="mb-4 text-xl font-bold">New Assignment</h2>
+              <h2 className="mb-4 text-xl font-bold">{t('orders.newAssignmentSubtitle')}</h2>
               <div className="mb-6 flex flex-col gap-3 rounded-xl bg-muted/50 p-4 text-sm">
-                <div><span className="font-medium">Vehicle: </span>{selectedCase.vehicle.make} {selectedCase.vehicle.model} {selectedCase.vehicle.year}</div>
-                <div><span className="font-medium">Plate: </span>{selectedCase.vehicle.plate}</div>
-                <div><span className="font-medium">Color: </span>{selectedCase.vehicle.color}</div>
-                <div><span className="font-medium">Ref: </span>{selectedCase.accidentRef}</div>
+                <div><span className="font-medium">{t('order.vehicle')}: </span>{selectedCase.vehicle.make} {selectedCase.vehicle.model} {selectedCase.vehicle.year}</div>
+                <div><span className="font-medium">{t('order.plate')}: </span>{selectedCase.vehicle.plate}</div>
+                <div><span className="font-medium">{t('order.color')}: </span>{selectedCase.vehicle.color}</div>
+                <div><span className="font-medium">{t('order.ref')}: </span>{selectedCase.accidentRef}</div>
               </div>
 
               {!showReject ? (
@@ -188,7 +190,7 @@ export default function OrdersPage() {
                     onClick={() => setShowReject(true)}
                     disabled={processing}
                   >
-                    <XCircle className="mr-2 h-5 w-5" /> Reject
+                    <XCircle className="mr-2 h-5 w-5" /> {t('orders.reject')}
                   </Button>
                   <Button
                     size="xl"
@@ -196,33 +198,33 @@ export default function OrdersPage() {
                     onClick={handleAccept}
                     disabled={processing}
                   >
-                    <CheckCircle className="mr-2 h-5 w-5" /> Accept
+                    <CheckCircle className="mr-2 h-5 w-5" /> {t('orders.accept')}
                   </Button>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
                   <Textarea
-                    placeholder="Reason for rejection (min 10 characters)"
+                    placeholder={t('orders.rejectReasonPlaceholder')}
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
                     rows={3}
                   />
                   <div className="flex gap-3">
-                    <Button variant="outline" className="flex-1" onClick={() => setShowReject(false)}>Back</Button>
+                    <Button variant="outline" className="flex-1" onClick={() => setShowReject(false)}>{t('actions.back')}</Button>
                     <Button
                       variant="destructive"
                       className="flex-1"
                       disabled={rejectReason.length < 10 || processing}
                       onClick={handleReject}
                     >
-                      Confirm Rejection
+                      {processing ? t('orders.processing') : t('orders.confirmRejection')}
                     </Button>
                   </div>
                 </div>
               )}
 
               <Button variant="ghost" className="mt-3 w-full" onClick={() => { setSelectedCase(null); setShowReject(false); }}>
-                Cancel
+                {t('actions.cancel')}
               </Button>
             </motion.div>
           </motion.div>

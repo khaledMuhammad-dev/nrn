@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { OpsLayout } from '@/components/layout/OpsLayout';
@@ -22,6 +23,7 @@ interface Invoice {
 }
 
 export default function ApprovalsPage() {
+  const { t } = useTranslation();
   const [estimates, setEstimates] = useState<Estimate[]>([]);
   const [invoices,  setInvoices]  = useState<Invoice[]>([]);
   const [loading, setLoading]     = useState(true);
@@ -56,51 +58,58 @@ export default function ApprovalsPage() {
   const handleApproveEstimate = async (caseId: string) => {
     try {
       await api.post(`/cases/${caseId}/approve-estimate`);
-      toast.success('Estimate approved!');
-    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed'); }
+      toast.success(t('approvals.approveSuccess'));
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : t('approvals.failed')); }
   };
 
   const handleRejectEstimate = async (caseId: string) => {
     const reason = rejectReasons[caseId];
-    if (!reason) { toast.error('Please enter a rejection reason'); return; }
+    if (!reason) { toast.error(t('approvals.rejectPlaceholder')); return; }
     try {
       await api.post(`/cases/${caseId}/reject-estimate`, { reason });
-      toast.info('Estimate rejected');
-    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed'); }
+      toast.info(t('approvals.rejectSuccess'));
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : t('approvals.failed')); }
   };
 
   const handleApproveInvoice = async (caseId: string) => {
     try {
       await api.post(`/cases/${caseId}/approve-invoice`);
-      toast.success('Invoice approved — Case closed!');
-    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed'); }
+      toast.success(t('approvals.approveSuccess'));
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : t('approvals.failed')); }
   };
 
   return (
     <OpsLayout>
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-bold">Approval Queue</h1>
+        <h1 className="text-2xl font-bold">{t('approvals.title')}</h1>
 
         <Tabs defaultValue="estimates">
           <TabsList>
-            <TabsTrigger value="estimates">Estimates ({estimates.length})</TabsTrigger>
-            <TabsTrigger value="invoices">Invoices ({invoices.length})</TabsTrigger>
+            <TabsTrigger value="estimates">{t('approvals.estimates')} ({estimates.length})</TabsTrigger>
+            <TabsTrigger value="invoices">{t('approvals.invoices')} ({invoices.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="estimates" className="flex flex-col gap-4 pt-4">
             {loading ? <Skeleton className="h-40" /> :
-             estimates.length === 0 ? <p className="py-8 text-center text-muted-foreground">No pending estimates</p> :
+             estimates.length === 0 ? <p className="py-8 text-center text-muted-foreground">{t('approvals.noEstimates')}</p> :
              estimates.map((est) => (
               <motion.div key={est.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="flex items-center gap-2 text-base">
-                      <FileText className="h-4 w-4" /> Case {est.caseId}
+                      <FileText className="h-4 w-4" /> {t('approvals.caseRef')}: {est.caseId}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-3">
                     <table className="w-full text-sm">
-                      <thead><tr className="border-b"><th className="py-1 text-left">Item</th><th className="py-1 text-right">Qty</th><th className="py-1 text-right">Unit</th><th className="py-1 text-right">Total</th></tr></thead>
+                      <thead>
+                        <tr className="border-b">
+                          <th className="py-1 text-left">{t('approvals.lineItems')}</th>
+                          <th className="py-1 text-right">Qty</th>
+                          <th className="py-1 text-right">Unit</th>
+                          <th className="py-1 text-right">{t('approvals.total')}</th>
+                        </tr>
+                      </thead>
                       <tbody>
                         {est.lineItems.map((item, i) => (
                           <tr key={i} className="border-b last:border-0">
@@ -113,19 +122,19 @@ export default function ApprovalsPage() {
                       </tbody>
                     </table>
                     <div className="flex items-center justify-between border-t pt-2">
-                      <span className="text-lg font-bold">Total: SAR {est.total.toLocaleString()}</span>
+                      <span className="text-lg font-bold">{t('approvals.total')}: SAR {est.total.toLocaleString()}</span>
                     </div>
                     <Input
-                      placeholder="Rejection reason (if rejecting)"
+                      placeholder={t('approvals.rejectPlaceholder')}
                       value={rejectReasons[est.caseId] ?? ''}
                       onChange={(e) => setRejectReasons((p) => ({ ...p, [est.caseId]: e.target.value }))}
                     />
                     <div className="flex gap-3">
                       <Button variant="destructive" className="flex-1" onClick={() => handleRejectEstimate(est.caseId)}>
-                        <XCircle className="mr-2 h-4 w-4" /> Reject
+                        <XCircle className="mr-2 h-4 w-4" /> {t('approvals.reject')}
                       </Button>
                       <Button className="flex-1 bg-green-600 hover:bg-green-700" onClick={() => handleApproveEstimate(est.caseId)}>
-                        <CheckCircle className="mr-2 h-4 w-4" /> Approve
+                        <CheckCircle className="mr-2 h-4 w-4" /> {t('approvals.approve')}
                       </Button>
                     </div>
                   </CardContent>
@@ -136,17 +145,17 @@ export default function ApprovalsPage() {
 
           <TabsContent value="invoices" className="flex flex-col gap-4 pt-4">
             {loading ? <Skeleton className="h-40" /> :
-             invoices.length === 0 ? <p className="py-8 text-center text-muted-foreground">No pending invoices</p> :
+             invoices.length === 0 ? <p className="py-8 text-center text-muted-foreground">{t('approvals.noInvoices')}</p> :
              invoices.map((inv) => (
               <motion.div key={inv.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Invoice — Case {inv.caseId}</CardTitle>
+                    <CardTitle className="text-base">{t('approvals.invoices')} — {t('approvals.caseRef')}: {inv.caseId}</CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-3">
                     <div className="text-2xl font-bold text-[var(--brand-accent)]">SAR {inv.amount.toLocaleString()}</div>
                     <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => handleApproveInvoice(inv.caseId)}>
-                      <CheckCircle className="mr-2 h-4 w-4" /> Approve & Close Case
+                      <CheckCircle className="mr-2 h-4 w-4" /> {t('approvals.approve')}
                     </Button>
                   </CardContent>
                 </Card>

@@ -81,7 +81,7 @@ export function FileUpload({ path, accept = 'image/*,.pdf', onUploadComplete, la
         <div className="text-center">
           <ImageIcon className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
           <p className="mb-1 text-sm font-medium">{label ?? 'Click or drag to upload'}</p>
-          <p className="text-xs text-muted-foreground">JPG, PNG, WebP, PDF</p>
+          <p className="text-xs text-muted-foreground">{accept.includes('pdf') ? 'JPG, PNG, WebP, PDF' : 'JPG, PNG, WebP'}</p>
         </div>
       )}
 

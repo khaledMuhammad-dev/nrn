@@ -1,13 +1,123 @@
 {
-  "app": { "name": "NRN Customer" },
-  "nav": { "accidents": "My Accidents", "profile": "Profile", "notifications": "Notifications", "logout": "Log Out" },
-  "login": { "title": "Welcome Back", "subtitle": "Sign in to your NRN account", "email": "Email", "password": "Password", "submit": "Sign In", "error": "Invalid email or password" },
-  "accidents": { "title": "My Accidents", "empty": "No accidents yet", "findWorkshops": "Find Workshops", "openCase": "View Case" },
-  "status": { "label": "Status" },
-  "actions": { "cancel": "Cancel", "confirm": "Confirm", "back": "Back", "next": "Next", "save": "Save" },
-  "workshops": { "title": "Find a Workshop", "verified": "Najm Verified", "selectWorkshop": "Select Workshop", "rating": "Rating", "available": "Available", "busy": "Busy" },
-  "slots": { "title": "Pick a Slot", "confirm": "Confirm Booking", "selected": "Selected Slot" },
-  "case": { "vehicle": "Vehicle", "ref": "Reference", "appointment": "Appointment", "workshop": "Workshop", "cancel": "Cancel Booking", "cancelReason": "Reason for cancellation", "rate": "Rate Workshop", "timeline": "Case Timeline" },
+  "app": { "name": "Workshop Admin" },
+  "nav": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "capacity": "Capacity",
+    "schedule": "Schedule",
+    "slots": "Slots",
+    "bookings": "Bookings",
+    "team": "Team",
+    "performance": "Performance",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "logout": "Log Out"
+  },
+  "login": { "title": "Welcome Back", "subtitle": "Workshop admin access", "email": "Email", "password": "Password", "submit": "Sign In", "error": "Invalid email or password" },
+  "dashboard": {
+    "title": "Workshop Dashboard",
+    "activeJobs": "Active Jobs",
+    "todayAppointments": "Today's Appointments",
+    "slaCompliance": "SLA Compliance",
+    "rating": "Rating",
+    "availability": "Availability",
+    "open": "Open",
+    "busy": "Busy",
+    "closed": "Temporarily Closed",
+    "recentBookings": "Recent Bookings",
+    "waitTime": "Estimated Wait"
+  },
+  "profile": {
+    "title": "Workshop Profile",
+    "name": "Workshop Name",
+    "nameAr": "Workshop Name (Arabic)",
+    "address": "Address",
+    "phone": "Phone",
+    "services": "Services",
+    "photos": "Photos",
+    "save": "Save Changes",
+    "saveSuccess": "Profile saved",
+    "saveFailed": "Failed to save"
+  },
+  "capacity": {
+    "title": "Capacity Configuration",
+    "bays": "Service Bays",
+    "technicians": "Technicians",
+    "maxJobs": "Max Concurrent Jobs",
+    "save": "Save",
+    "saveSuccess": "Capacity saved",
+    "saveFailed": "Failed to save"
+  },
+  "schedule": {
+    "title": "Working Hours",
+    "day": "Day",
+    "open": "Open",
+    "close": "Close",
+    "holiday": "Holiday",
+    "blackoutDates": "Blackout Dates",
+    "addDate": "Add Date",
+    "save": "Save Schedule",
+    "saveSuccess": "Schedule saved",
+    "saveFailed": "Failed to save"
+  },
+  "slots": {
+    "title": "Slot Management",
+    "totalSlots": "Total",
+    "booked": "Booked",
+    "remaining": "Remaining",
+    "addSlots": "Add Slots",
+    "save": "Save",
+    "saveSuccess": "Slots saved",
+    "saveFailed": "Failed to save"
+  },
+  "bookings": {
+    "title": "Booking Inbox",
+    "incoming": "Incoming",
+    "calendar": "Calendar",
+    "accept": "Accept",
+    "decline": "Decline",
+    "noBookings": "No pending bookings"
+  },
+  "team": {
+    "title": "Team Management",
+    "addMember": "Add Member",
+    "name": "Name",
+    "role": "Role",
+    "contact": "Contact",
+    "remove": "Remove"
+  },
+  "performance": {
+    "title": "Performance",
+    "jobsCompleted": "Jobs Completed",
+    "avgTurnaround": "Avg Turnaround",
+    "slaCompliance": "SLA Compliance",
+    "acceptanceRate": "Acceptance Rate",
+    "exportCsv": "Export CSV",
+    "exportPdf": "Export PDF"
+  },
+  "settings": {
+    "title": "Settings"
+  },
+  "status": {
+    "label": "Status",
+    "ACCIDENT_REPORTED": "Accident Reported",
+    "WORKSHOP_SELECTION": "Workshop Selection",
+    "ASSIGNMENT_PENDING": "Assignment Pending",
+    "APPOINTMENT_SCHEDULED": "Appointment Scheduled",
+    "VEHICLE_RECEIVED": "Vehicle Received",
+    "UNDER_INSPECTION": "Under Inspection",
+    "ESTIMATE_PENDING": "Estimate Pending",
+    "ESTIMATE_APPROVED": "Estimate Approved",
+    "PARTS_PENDING": "Parts Pending",
+    "REPAIR_IN_PROGRESS": "Repair in Progress",
+    "REPAIR_COMPLETED": "Repair Completed",
+    "READY_FOR_PICKUP": "Ready for Pickup",
+    "DELIVERED": "Delivered",
+    "INVOICE_PENDING": "Invoice Pending",
+    "CLOSED": "Closed",
+    "CANCELLED": "Cancelled"
+  },
+  "actions": { "cancel": "Cancel", "confirm": "Confirm", "back": "Back", "save": "Save", "done": "Done" },
   "notifications": { "title": "Notifications", "empty": "No notifications", "markAllRead": "Mark all read" },
   "idle": { "title": "Session Timeout", "message": "You were logged out due to 5 minutes of inactivity.", "redirect": "You will be redirected in 10 seconds.", "stayLoggedIn": "Stay Logged In", "logout": "Log Out" }
 }

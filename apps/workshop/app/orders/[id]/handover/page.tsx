@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useCase } from '@/hooks/useCase';
 import { SignaturePad } from '@/components/shared/SignaturePad';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +15,7 @@ import api from '@/lib/axios';
 export default function HandoverPage({ params }: { params: { id: string } }) {
   const { id }   = params;
   const router   = useRouter();
+  const { t }    = useTranslation();
   const { caseData, loading } = useCase(id);
   const [saving, setSaving]   = useState(false);
 
@@ -31,10 +33,10 @@ export default function HandoverPage({ params }: { params: { id: string } }) {
       if (!uploadRes.ok) throw new Error(uploadJson.error ?? 'Upload failed');
       const handoverSignatureUrl = uploadJson.data.url;
       await api.post(`/cases/${id}/deliver`, { handoverSignatureUrl });
-      toast.success('Vehicle handed over!');
+      toast.success(t('order.handoverSaveSuccess'));
       router.push(`/orders/${id}`);
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed');
+      toast.error(err instanceof Error ? err.message : t('order.handoverSaveFailed'));
     } finally {
       setSaving(false);
     }
@@ -46,30 +48,25 @@ export default function HandoverPage({ params }: { params: { id: string } }) {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-lg font-bold">Vehicle Handover</h1>
+        <h1 className="text-lg font-bold">{t('order.handover')}</h1>
       </div>
 
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Truck className="h-4 w-4" /> Handover Summary
+            <Truck className="h-4 w-4" /> {t('order.handoverSummary')}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-sm">
-          <p>Vehicle: {caseData?.vehicle.make} {caseData?.vehicle.model}</p>
-          <p>Plate: {caseData?.vehicle.plate}</p>
-          <p className="mt-3 text-xs text-muted-foreground leading-relaxed">
-            By signing below, the customer confirms receipt of the repaired vehicle and acknowledges
-            that all repairs have been performed to their satisfaction. All warranty terms and conditions apply.
-            أقر المالك بصحة وسلامة المركبة عند الاستلام وأن الإصلاح قد تم كما هو مطلوب.
-          </p>
+          <p>{t('order.vehicle')}: {caseData?.vehicle.make} {caseData?.vehicle.model}</p>
+          <p>{t('order.plate')}: {caseData?.vehicle.plate}</p>
         </CardContent>
       </Card>
 
       <Card className="p-4">
-        <h2 className="mb-3 font-semibold">Customer Signature</h2>
+        <h2 className="mb-3 font-semibold">{t('order.signature')}</h2>
         <SignaturePad onSave={handleSignature} />
-        {saving && <p className="mt-2 text-center text-sm text-muted-foreground">Saving…</p>}
+        {saving && <p className="mt-2 text-center text-sm text-muted-foreground">{t('order.saving')}</p>}
       </Card>
     </div>
   );

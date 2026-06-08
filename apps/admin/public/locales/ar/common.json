@@ -1,13 +1,123 @@
 {
-  "app": { "name": "NRN العميل" },
-  "nav": { "accidents": "حوادثي", "profile": "الملف الشخصي", "notifications": "الإشعارات", "logout": "تسجيل الخروج" },
-  "login": { "title": "مرحباً بعودتك", "subtitle": "تسجيل الدخول إلى حساب NRN", "email": "البريد الإلكتروني", "password": "كلمة المرور", "submit": "تسجيل الدخول", "error": "بريد إلكتروني أو كلمة مرور غير صحيحة" },
-  "accidents": { "title": "حوادثي", "empty": "لا توجد حوادث بعد", "findWorkshops": "البحث عن ورش", "openCase": "عرض الحالة" },
-  "status": { "label": "الحالة" },
-  "actions": { "cancel": "إلغاء", "confirm": "تأكيد", "back": "رجوع", "next": "التالي", "save": "حفظ" },
-  "workshops": { "title": "البحث عن ورشة", "verified": "معتمد من نجم", "selectWorkshop": "اختيار الورشة", "rating": "التقييم", "available": "متاح", "busy": "مشغول" },
-  "slots": { "title": "اختيار موعد", "confirm": "تأكيد الحجز", "selected": "الموعد المختار" },
-  "case": { "vehicle": "المركبة", "ref": "المرجع", "appointment": "الموعد", "workshop": "الورشة", "cancel": "إلغاء الحجز", "cancelReason": "سبب الإلغاء", "rate": "تقييم الورشة", "timeline": "مسار الحالة" },
+  "app": { "name": "إدارة الورشة" },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "profile": "الملف الشخصي",
+    "capacity": "الطاقة الاستيعابية",
+    "schedule": "جدول العمل",
+    "slots": "المواعيد",
+    "bookings": "الحجوزات",
+    "team": "الفريق",
+    "performance": "الأداء",
+    "settings": "الإعدادات",
+    "notifications": "الإشعارات",
+    "logout": "تسجيل الخروج"
+  },
+  "login": { "title": "مرحباً بعودتك", "subtitle": "دخول مدير الورشة", "email": "البريد الإلكتروني", "password": "كلمة المرور", "submit": "تسجيل الدخول", "error": "بريد إلكتروني أو كلمة مرور غير صحيحة" },
+  "dashboard": {
+    "title": "لوحة تحكم الورشة",
+    "activeJobs": "الأعمال النشطة",
+    "todayAppointments": "مواعيد اليوم",
+    "slaCompliance": "الالتزام بمستوى الخدمة",
+    "rating": "التقييم",
+    "availability": "التوفر",
+    "open": "مفتوح",
+    "busy": "مشغول",
+    "closed": "مغلق مؤقتاً",
+    "recentBookings": "الحجوزات الأخيرة",
+    "waitTime": "وقت الانتظار المتوقع"
+  },
+  "profile": {
+    "title": "ملف الورشة",
+    "name": "اسم الورشة",
+    "nameAr": "اسم الورشة (بالعربية)",
+    "address": "العنوان",
+    "phone": "الهاتف",
+    "services": "الخدمات",
+    "photos": "الصور",
+    "save": "حفظ التغييرات",
+    "saveSuccess": "تم حفظ الملف",
+    "saveFailed": "فشل الحفظ"
+  },
+  "capacity": {
+    "title": "إعداد الطاقة الاستيعابية",
+    "bays": "عدد خطوط الخدمة",
+    "technicians": "عدد الفنيين",
+    "maxJobs": "الحد الأقصى للأعمال المتزامنة",
+    "save": "حفظ",
+    "saveSuccess": "تم حفظ الطاقة الاستيعابية",
+    "saveFailed": "فشل الحفظ"
+  },
+  "schedule": {
+    "title": "ساعات العمل",
+    "day": "اليوم",
+    "open": "الفتح",
+    "close": "الإغلاق",
+    "holiday": "إجازة",
+    "blackoutDates": "تواريخ الإغلاق",
+    "addDate": "إضافة تاريخ",
+    "save": "حفظ الجدول",
+    "saveSuccess": "تم حفظ الجدول",
+    "saveFailed": "فشل الحفظ"
+  },
+  "slots": {
+    "title": "إدارة المواعيد",
+    "totalSlots": "الإجمالي",
+    "booked": "محجوز",
+    "remaining": "متبقٍ",
+    "addSlots": "إضافة مواعيد",
+    "save": "حفظ",
+    "saveSuccess": "تم حفظ المواعيد",
+    "saveFailed": "فشل الحفظ"
+  },
+  "bookings": {
+    "title": "صندوق الحجوزات",
+    "incoming": "الواردة",
+    "calendar": "التقويم",
+    "accept": "قبول",
+    "decline": "رفض",
+    "noBookings": "لا توجد حجوزات معلقة"
+  },
+  "team": {
+    "title": "إدارة الفريق",
+    "addMember": "إضافة عضو",
+    "name": "الاسم",
+    "role": "الدور",
+    "contact": "التواصل",
+    "remove": "إزالة"
+  },
+  "performance": {
+    "title": "الأداء",
+    "jobsCompleted": "الأعمال المنجزة",
+    "avgTurnaround": "متوسط وقت الإنجاز",
+    "slaCompliance": "الالتزام بمستوى الخدمة",
+    "acceptanceRate": "معدل القبول",
+    "exportCsv": "تصدير CSV",
+    "exportPdf": "تصدير PDF"
+  },
+  "settings": {
+    "title": "الإعدادات"
+  },
+  "status": {
+    "label": "الوضع",
+    "ACCIDENT_REPORTED": "تم الإبلاغ عن الحادث",
+    "WORKSHOP_SELECTION": "اختيار الورشة",
+    "ASSIGNMENT_PENDING": "في انتظار التكليف",
+    "APPOINTMENT_SCHEDULED": "تم تحديد الموعد",
+    "VEHICLE_RECEIVED": "تم استلام السيارة",
+    "UNDER_INSPECTION": "قيد الفحص",
+    "ESTIMATE_PENDING": "في انتظار التقدير",
+    "ESTIMATE_APPROVED": "تم اعتماد التقدير",
+    "PARTS_PENDING": "في انتظار القطع",
+    "REPAIR_IN_PROGRESS": "الإصلاح جارٍ",
+    "REPAIR_COMPLETED": "اكتمل الإصلاح",
+    "READY_FOR_PICKUP": "جاهز للاستلام",
+    "DELIVERED": "تم التسليم",
+    "INVOICE_PENDING": "في انتظار الفاتورة",
+    "CLOSED": "مغلق",
+    "CANCELLED": "ملغى"
+  },
+  "actions": { "cancel": "إلغاء", "confirm": "تأكيد", "back": "رجوع", "save": "حفظ", "done": "تم" },
   "notifications": { "title": "الإشعارات", "empty": "لا توجد إشعارات", "markAllRead": "تحديد الكل كمقروء" },
-  "idle": { "title": "انتهت الجلسة", "message": "تم تسجيل خروجك بسبب 5 دقائق من عدم النشاط.", "redirect": "سيتم إعادة توجيهك خلال 10 ثوانٍ.", "stayLoggedIn": "البقاء مسجلاً", "logout": "تسجيل الخروج" }
+  "idle": { "title": "انتهت الجلسة", "message": "تم تسجيل خروجك بسبب ٥ دقائق من عدم النشاط.", "redirect": "سيتم إعادة توجيهك خلال ١٠ ثوانٍ.", "stayLoggedIn": "البقاء مسجلاً", "logout": "تسجيل الخروج" }
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +12,7 @@ import { Briefcase, Calendar, TrendingUp, Star, Wifi, WifiOff, Clock } from 'luc
 import { toast } from 'sonner';
 
 export default function AdminDashboardPage() {
+  const { t } = useTranslation();
   const { profile } = useAuth();
   const [availability, setAvailability] = useState<'open' | 'busy' | 'closed'>('open');
   const [stats, setStats] = useState({ activeJobs: 0, todayAppointments: 0, slaCompliance: 98, avgRating: 4.7 });
@@ -29,7 +31,7 @@ export default function AdminDashboardPage() {
     try {
       await api.post(`/workshops/${profile.workshopId}/availability`, { status });
       setAvailability(status);
-      toast.success(`Status changed to ${status}`);
+      toast.success(t(`dashboard.${status}`));
     } catch {
       toast.error('Failed to update status');
     } finally {
@@ -38,21 +40,21 @@ export default function AdminDashboardPage() {
   };
 
   const kpis = [
-    { label: 'Active Jobs',        value: stats.activeJobs,        icon: Briefcase,  color: 'text-blue-600' },
-    { label: "Today's Appts",      value: stats.todayAppointments, icon: Calendar,   color: 'text-green-600' },
-    { label: 'SLA Compliance',     value: `${stats.slaCompliance}%`, icon: TrendingUp, color: 'text-purple-600' },
-    { label: 'Average Rating',     value: stats.avgRating.toFixed(1), icon: Star,     color: 'text-yellow-600' },
+    { label: t('dashboard.activeJobs'),        value: stats.activeJobs,          icon: Briefcase,  color: 'text-blue-600' },
+    { label: t('dashboard.todayAppointments'), value: stats.todayAppointments,   icon: Calendar,   color: 'text-green-600' },
+    { label: t('dashboard.slaCompliance'),     value: `${stats.slaCompliance}%`, icon: TrendingUp, color: 'text-purple-600' },
+    { label: t('dashboard.rating'),            value: stats.avgRating.toFixed(1),icon: Star,       color: 'text-yellow-600' },
   ];
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
 
       {/* Availability Toggle */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Wifi className="h-4 w-4" /> Workshop Availability
+            <Wifi className="h-4 w-4" /> {t('dashboard.availability')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -73,7 +75,7 @@ export default function AdminDashboardPage() {
                 variant={availability === s ? 'default' : 'outline'}
               >
                 {s === 'open' ? <Wifi className="mr-2 h-4 w-4" /> : <WifiOff className="mr-2 h-4 w-4" />}
-                {s.charAt(0).toUpperCase() + s.slice(1)}
+                {t(`dashboard.${s}`)}
               </Button>
             ))}
           </div>

@@ -18,7 +18,8 @@ export default function SlotsPage({ params }: { params: { id: string } }) {
   const router      = useRouter();
   const searchParams = useSearchParams();
   const workshopId  = searchParams.get('workshopId');
-  const { t }       = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang        = i18n.language;
   const [slots, setSlots]       = useState<Slot[]>([]);
   const [loading, setLoading]   = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
@@ -41,10 +42,10 @@ export default function SlotsPage({ params }: { params: { id: string } }) {
     setBooking(true);
     try {
       await api.post(`/cases/${id}/book`, { slotId: selected, workshopId });
-      toast.success('Workshop booked — confirming…');
+      toast.success(t('slots.confirm'));
       router.push(`/accidents/${id}`);
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Booking failed');
+      toast.error(err instanceof Error ? err.message : t('actions.cancel'));
     } finally {
       setBooking(false);
     }
@@ -65,7 +66,9 @@ export default function SlotsPage({ params }: { params: { id: string } }) {
         Object.entries(grouped).map(([date, daySlots]) => (
           <div key={date}>
             <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
-              {new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+              {new Date(date).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', {
+                weekday: 'long', month: 'short', day: 'numeric',
+              })}
             </h2>
             <div className="flex flex-col gap-2">
               {daySlots.map((slot) => {
@@ -88,11 +91,14 @@ export default function SlotsPage({ params }: { params: { id: string } }) {
                       <span className="font-medium">{slot.timeWindow}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">
-                        {slot.capacity - slot.bookedCount} left
-                      </span>
+                      {isFull ? (
+                        <span className="text-xs text-red-500">{t('slots.full')}</span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">
+                          {t('slots.left', { count: slot.capacity - slot.bookedCount })}
+                        </span>
+                      )}
                       {isSelected && <CheckCircle className="h-4 w-4 text-[var(--brand-primary)]" />}
-                      {isFull && <span className="text-xs text-red-500">Full</span>}
                     </div>
                   </motion.button>
                 );
@@ -115,7 +121,7 @@ export default function SlotsPage({ params }: { params: { id: string } }) {
             disabled={booking}
             className="w-full"
           >
-            {booking ? 'Booking…' : t('slots.confirm')}
+            {booking ? t('slots.booking') : t('slots.confirm')}
           </Button>
         </motion.div>
       )}

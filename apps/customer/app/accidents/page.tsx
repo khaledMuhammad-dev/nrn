@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
@@ -9,9 +10,12 @@ import { StatusBadge } from '@/components/case/StatusBadge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { CaseStatus } from '@nrn/shared';
 import { formatDate, toDate } from '@nrn/shared';
-import { Car, ChevronRight, AlertTriangle } from 'lucide-react';
+import { Car, ChevronRight, RotateCcw } from 'lucide-react';
+import { toast } from 'sonner';
+import api from '@/lib/axios';
 
 export default function AccidentsPage() {
   const router = useRouter();
@@ -19,8 +23,23 @@ export default function AccidentsPage() {
   const { profile, loading: authLoading } = useAuth();
   const { cases, loading: casesLoading } = useCases(profile?.id);
   const lang = i18n.language as 'en' | 'ar';
+  const [showStartOver, setShowStartOver] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   const loading = authLoading || casesLoading;
+
+  const handleStartOver = async () => {
+    setResetting(true);
+    try {
+      await api.post('/seed');
+      toast.success(t('actions.startOverSuccess'));
+      setShowStartOver(false);
+    } catch {
+      toast.error(t('actions.startOverFailed'));
+    } finally {
+      setResetting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -32,7 +51,18 @@ export default function AccidentsPage() {
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <h1 className="text-xl font-bold">{t('accidents.title')}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold">{t('accidents.title')}</h1>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowStartOver(true)}
+          className="gap-1.5 text-muted-foreground"
+        >
+          <RotateCcw className="h-3.5 w-3.5" />
+          {t('actions.startOver')}
+        </Button>
+      </div>
 
       {cases.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-16 text-center">
@@ -66,7 +96,7 @@ export default function AccidentsPage() {
                     </span>
                   </div>
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    {c.vehicle.plate} · Ref: {c.accidentRef}
+                    {c.vehicle.plate} · {t('accidents.ref')}: {c.accidentRef}
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {formatDate(c.createdAt, lang)}
@@ -95,6 +125,30 @@ export default function AccidentsPage() {
           </motion.div>
         ))
       )}
+
+      {/* Start Over Dialog */}
+      <Dialog open={showStartOver} onOpenChange={setShowStartOver}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('actions.startOverConfirm')}</DialogTitle>
+            <DialogDescription>{t('actions.startOverDesc')}</DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" onClick={() => setShowStartOver(false)} className="flex-1">
+              {t('actions.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleStartOver}
+              disabled={resetting}
+              className="flex-1 gap-2"
+            >
+              <RotateCcw className={`h-4 w-4 ${resetting ? 'animate-spin' : ''}`} />
+              {resetting ? '…' : t('actions.startOverConfirm')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

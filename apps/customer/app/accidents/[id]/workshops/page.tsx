@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Workshop } from '@nrn/shared';
-import { Star, MapPin, ChevronRight, Search, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Star, ChevronRight, Search, ArrowLeft, ShieldCheck } from 'lucide-react';
 import api from '@/lib/axios';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -31,7 +31,11 @@ export default function WorkshopsPage({ params }: { params: { id: string } }) {
       .finally(() => setLoading(false));
   }, [debouncedSearch, filter]);
 
-  const FILTERS = ['all', 'open', 'top_rated'];
+  const FILTERS = [
+    { value: 'all',      label: t('workshops.filters.all') },
+    { value: 'open',     label: t('workshops.filters.open') },
+    { value: 'top_rated',label: t('workshops.filters.top_rated') },
+  ];
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -46,7 +50,7 @@ export default function WorkshopsPage({ params }: { params: { id: string } }) {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search workshops..."
+          placeholder={t('workshops.searchPlaceholder')}
           className="pl-9"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -57,13 +61,13 @@ export default function WorkshopsPage({ params }: { params: { id: string } }) {
       <div className="flex gap-2 overflow-x-auto pb-1">
         {FILTERS.map((f) => (
           <Button
-            key={f}
+            key={f.value}
             size="sm"
-            variant={filter === f ? 'brand' : 'outline'}
-            onClick={() => setFilter(f)}
-            className="shrink-0 capitalize"
+            variant={filter === f.value ? 'brand' : 'outline'}
+            onClick={() => setFilter(f.value)}
+            className="shrink-0"
           >
-            {f.replace('_', ' ')}
+            {f.label}
           </Button>
         ))}
       </div>
@@ -88,7 +92,7 @@ export default function WorkshopsPage({ params }: { params: { id: string } }) {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold">{ws.name}</span>
                     {ws.status === 'active' && (
-                      <ShieldCheck className="h-4 w-4 text-blue-500" />
+                      <ShieldCheck className="h-4 w-4 text-blue-500" aria-label={t('workshops.verified')} />
                     )}
                   </div>
                   <div className="mt-1 flex items-center gap-1 text-sm text-yellow-500">
@@ -100,8 +104,13 @@ export default function WorkshopsPage({ params }: { params: { id: string } }) {
                     {ws.services.map((s) => (
                       <Badge key={s} variant="secondary" className="text-xs capitalize">{s}</Badge>
                     ))}
-                    <Badge variant={ws.availability === 'open' ? 'done' : 'warn'} className="text-xs capitalize">
-                      {ws.availability ?? 'open'}
+                    <Badge
+                      variant={(ws as Workshop & { availability?: string }).availability === 'open' ? 'done' : 'warn'}
+                      className="text-xs"
+                    >
+                      {(ws as Workshop & { availability?: string }).availability === 'open'
+                        ? t('workshops.available')
+                        : t('workshops.busy')}
                     </Badge>
                   </div>
                 </div>

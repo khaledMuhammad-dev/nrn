@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import { OpsLayout } from '@/components/layout/OpsLayout';
 import { useCases } from '@/hooks/useCase';
 import { StatusBadge } from '@/components/case/StatusBadge';
@@ -11,6 +12,7 @@ import { motion } from 'framer-motion';
 import { FileText, CheckSquare, AlertTriangle, Network } from 'lucide-react';
 
 export default function OpsDashboardPage() {
+  const { t } = useTranslation();
   const { cases, loading } = useCases();
 
   const activeCount   = cases.filter((c) => ![CaseStatus.CLOSED, CaseStatus.CANCELLED].includes(c.status as CaseStatus)).length;
@@ -26,16 +28,16 @@ export default function OpsDashboardPage() {
     .slice(0, 10);
 
   const kpis = [
-    { label: 'Active Cases',      value: activeCount,   icon: FileText,       color: 'text-blue-600' },
-    { label: 'Pending Approvals', value: pendingCount,  icon: CheckSquare,    color: 'text-amber-600' },
-    { label: 'SLA Breaches Today',value: breachedCount, icon: AlertTriangle,  color: 'text-red-600' },
-    { label: 'Network Size',      value: 1,             icon: Network,        color: 'text-green-600' },
+    { label: t('dashboard.activeCases'),    value: activeCount,   icon: FileText,      color: 'text-blue-600' },
+    { label: t('dashboard.pendingApprovals'), value: pendingCount, icon: CheckSquare,  color: 'text-amber-600' },
+    { label: t('dashboard.slaBreaches'),    value: breachedCount, icon: AlertTriangle, color: 'text-red-600' },
+    { label: t('dashboard.networkSize'),    value: 1,             icon: Network,       color: 'text-green-600' },
   ];
 
   return (
     <OpsLayout>
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-bold">Operations Dashboard</h1>
+        <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
 
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {kpis.map(({ label, value, icon: Icon, color }, idx) => (
@@ -53,7 +55,7 @@ export default function OpsDashboardPage() {
 
         {/* Status Breakdown */}
         <Card>
-          <CardHeader><CardTitle className="text-base">Cases by Status</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t('dashboard.casesByStatus')}</CardTitle></CardHeader>
           <CardContent>
             {loading ? <Skeleton className="h-24" /> : (
               <div className="flex flex-wrap gap-3">
@@ -74,7 +76,7 @@ export default function OpsDashboardPage() {
 
         {/* Recent Activity */}
         <Card>
-          <CardHeader><CardTitle className="text-base">Recent Activity</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t('dashboard.recentActivity')}</CardTitle></CardHeader>
           <CardContent>
             <div className="flex flex-col divide-y">
               {recentActivity.map((entry, idx) => (

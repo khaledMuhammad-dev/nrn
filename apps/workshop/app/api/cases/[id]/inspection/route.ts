@@ -5,7 +5,7 @@ import { transitionCase, verifyToken, jsonError, jsonSuccess } from '@/lib/apiHe
 import { CaseStatus, UserRole } from '@nrn/shared';
 
 const schema = z.object({
-  photos: z.array(z.string()).length(6),
+  photos: z.array(z.string()).min(1),
   notes:  z.string(),
 });
 

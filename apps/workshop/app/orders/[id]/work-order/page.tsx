@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,21 +13,23 @@ import { toast } from 'sonner';
 import api from '@/lib/axios';
 import { cn } from '@/lib/utils';
 
-const DEFAULT_ITEMS = [
-  { label: 'Re-assembling', done: false, technicalNotes: '' },
-  { label: 'Body Fixing',   done: false, technicalNotes: '' },
-  { label: 'Painting',      done: false, technicalNotes: '' },
-  { label: 'Final Assembly', done: false, technicalNotes: '' },
-];
-
 export default function WorkOrderPage({ params }: { params: { id: string } }) {
   const { id }   = params;
   const router   = useRouter();
+  const { t }    = useTranslation();
+
+  const DEFAULT_ITEMS = [
+    { label: t('order.angles.front') + ' — ' + 'Re-assembling', done: false, technicalNotes: '' },
+    { label: 'Body Fixing',    done: false, technicalNotes: '' },
+    { label: 'Painting',       done: false, technicalNotes: '' },
+    { label: 'Final Assembly', done: false, technicalNotes: '' },
+  ];
+
   const [items, setItems] = useState(DEFAULT_ITEMS);
   const [marking, setMarking] = useState(false);
 
-  const progress    = Math.round((items.filter((i) => i.done).length / items.length) * 100);
-  const allDone     = items.every((i) => i.done);
+  const progress = Math.round((items.filter((i) => i.done).length / items.length) * 100);
+  const allDone  = items.every((i) => i.done);
 
   const toggle = (idx: number) => {
     setItems((prev) => prev.map((item, i) => i === idx ? { ...item, done: !item.done } : item));
@@ -40,10 +43,10 @@ export default function WorkOrderPage({ params }: { params: { id: string } }) {
     setMarking(true);
     try {
       await api.post(`/cases/${id}/complete`, { checklistItems: items });
-      toast.success('Vehicle marked as ready for pickup!');
+      toast.success(t('order.completeSuccess'));
       router.push(`/orders/${id}`);
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed');
+      toast.error(err instanceof Error ? err.message : t('order.completeFailed'));
     } finally {
       setMarking(false);
     }
@@ -55,13 +58,13 @@ export default function WorkOrderPage({ params }: { params: { id: string } }) {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-lg font-bold">Work Order Checklist</h1>
+        <h1 className="text-lg font-bold">{t('order.checklist')}</h1>
       </div>
 
       {/* Progress */}
       <Card className="p-4">
         <div className="mb-2 flex items-center justify-between text-sm">
-          <span>Progress</span>
+          <span>{t('order.progress')}</span>
           <span className="font-bold">{progress}%</span>
         </div>
         <motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }}>
@@ -87,7 +90,7 @@ export default function WorkOrderPage({ params }: { params: { id: string } }) {
           {item.done && (
             <div className="mt-3">
               <Textarea
-                placeholder="Technician notes (optional)"
+                placeholder={t('order.notes')}
                 rows={2}
                 value={item.technicalNotes}
                 onChange={(e) => setNotes(idx, e.target.value)}
@@ -106,7 +109,7 @@ export default function WorkOrderPage({ params }: { params: { id: string } }) {
             onClick={handleComplete}
             disabled={marking}
           >
-            {marking ? 'Marking ready…' : '✓ Mark Ready for Pickup'}
+            {marking ? t('order.completingAll') : t('order.completeAll')}
           </Button>
         </motion.div>
       )}

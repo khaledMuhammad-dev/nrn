@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useCase } from '@/hooks/useCase';
 import { StatusBadge } from '@/components/case/StatusBadge';
 import { SlaTimerBadge } from '@/components/case/SlaTimer';
@@ -17,11 +18,12 @@ import { useState } from 'react';
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const router  = useRouter();
+  const { t }   = useTranslation();
   const { caseData, loading } = useCase(id);
   const [starting, setStarting] = useState(false);
 
   if (loading) return <div className="p-4"><Skeleton className="h-64 w-full" /></div>;
-  if (!caseData) return <div className="p-4 text-center">Order not found</div>;
+  if (!caseData) return <div className="p-4 text-center">{t('order.notFound')}</div>;
 
   const status = caseData.status as CaseStatus;
 
@@ -29,9 +31,9 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
     setStarting(true);
     try {
       await api.post(`/cases/${id}/start`);
-      toast.success('Job started!');
+      toast.success(t('order.startJobSuccess'));
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed');
+      toast.error(err instanceof Error ? err.message : t('order.startJobFailed'));
     } finally {
       setStarting(false);
     }
@@ -39,21 +41,21 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
 
   const actionButtons = [
     {
-      label: 'Receive Car',
+      label: t('order.receiveCar'),
       icon: Car,
       href: `/orders/${id}/receive`,
       visible: status === CaseStatus.APPOINTMENT_SCHEDULED,
       variant: 'brand' as const,
     },
     {
-      label: 'Start Inspection',
+      label: t('order.startInspection'),
       icon: Camera,
       href: `/orders/${id}/inspection`,
       visible: status === CaseStatus.VEHICLE_RECEIVED,
       variant: 'brand' as const,
     },
     {
-      label: 'Add Items',
+      label: t('order.addItems'),
       icon: Package,
       href: `/orders/${id}/items`,
       visible: status === CaseStatus.UNDER_INSPECTION,
@@ -67,7 +69,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
       variant: 'brand' as const,
     },
     {
-      label: 'Start Job',
+      label: t('order.startJob'),
       icon: Wrench,
       action: handleStart,
       visible: status === CaseStatus.ESTIMATE_APPROVED,
@@ -75,21 +77,21 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
       loading: starting,
     },
     {
-      label: 'Work Order',
+      label: t('order.workOrder'),
       icon: CheckSquare,
       href: `/orders/${id}/work-order`,
       visible: status === CaseStatus.REPAIR_IN_PROGRESS,
       variant: 'brand' as const,
     },
     {
-      label: 'Vehicle Handover',
+      label: t('order.handover'),
       icon: Truck,
       href: `/orders/${id}/handover`,
       visible: status === CaseStatus.READY_FOR_PICKUP,
       variant: 'brand' as const,
     },
     {
-      label: 'Submit Invoice',
+      label: t('order.submitInvoice'),
       icon: FileText,
       href: `/orders/${id}/invoice`,
       visible: status === CaseStatus.DELIVERED,
@@ -105,7 +107,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
         <Button variant="ghost" size="icon" onClick={() => router.push('/orders')}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-lg font-bold">Order {id}</h1>
+        <h1 className="text-lg font-bold">{t('order.title', { id: id.slice(0, 8) })}</h1>
       </div>
 
       {/* Status + SLA */}
@@ -123,23 +125,23 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Car className="h-4 w-4" /> Vehicle
+            <Car className="h-4 w-4" /> {t('order.vehicle')}
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-2 text-sm">
-          <div><span className="text-muted-foreground">Make: </span>{caseData.vehicle.make}</div>
-          <div><span className="text-muted-foreground">Model: </span>{caseData.vehicle.model}</div>
-          <div><span className="text-muted-foreground">Year: </span>{caseData.vehicle.year}</div>
-          <div><span className="text-muted-foreground">Plate: </span>{caseData.vehicle.plate}</div>
-          <div><span className="text-muted-foreground">Color: </span>{caseData.vehicle.color}</div>
-          <div><span className="text-muted-foreground">VIN: </span><span className="font-mono text-xs">{caseData.vehicle.vin}</span></div>
+          <div><span className="text-muted-foreground">{t('order.make')}: </span>{caseData.vehicle.make}</div>
+          <div><span className="text-muted-foreground">{t('order.model')}: </span>{caseData.vehicle.model}</div>
+          <div><span className="text-muted-foreground">{t('order.year')}: </span>{caseData.vehicle.year}</div>
+          <div><span className="text-muted-foreground">{t('order.plate')}: </span>{caseData.vehicle.plate}</div>
+          <div><span className="text-muted-foreground">{t('order.color')}: </span>{caseData.vehicle.color}</div>
+          <div><span className="text-muted-foreground">{t('order.vin')}: </span><span className="font-mono text-xs">{caseData.vehicle.vin}</span></div>
         </CardContent>
       </Card>
 
       {/* Action Buttons */}
       {visibleActions.length > 0 && (
         <div className="flex flex-col gap-3">
-          <h2 className="font-semibold">Actions</h2>
+          <h2 className="font-semibold">{t('order.actions')}</h2>
           {visibleActions.map((action) => {
             const Icon = action.icon;
             return (
@@ -152,7 +154,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 disabled={action.loading}
               >
                 <Icon className="h-5 w-5" />
-                {action.loading ? 'Processing…' : action.label}
+                {action.loading ? t('order.processing') : action.label}
               </Button>
             );
           })}

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthGuard } from '@/components/layout/AuthGuard';
 import { Header } from '@/components/layout/Header';
@@ -10,6 +11,7 @@ import { User } from 'lucide-react';
 
 export default function ProfilePage() {
   const { profile } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <AuthGuard requiredRole={UserRole.CUSTOMER}>
@@ -19,13 +21,13 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" /> Profile
+                <User className="h-5 w-5" /> {t('profile.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2 text-sm">
-              <div><span className="font-medium">Name: </span>{profile?.displayName}</div>
-              <div><span className="font-medium">Email: </span>{profile?.email}</div>
-              <div><span className="font-medium">Role: </span>{profile?.role}</div>
+              <div><span className="font-medium">{t('profile.name')}: </span>{profile?.displayName}</div>
+              <div><span className="font-medium">{t('profile.email')}: </span>{profile?.email}</div>
+              <div><span className="font-medium">{t('profile.role')}: </span>{profile?.role}</div>
             </CardContent>
           </Card>
         </main>

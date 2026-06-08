@@ -13,17 +13,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CaseStatus } from '@nrn/shared';
-import { formatDateTime, toDate } from '@nrn/shared';
-import { Car, MapPin, Calendar, Star, ArrowLeft } from 'lucide-react';
+import { Car, Star, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/axios';
-
-const CANCEL_REASONS = [
-  { value: 'mistake',   label: 'Booked by mistake' },
-  { value: 'other_ws',  label: 'Found another workshop' },
-  { value: 'long_wait', label: 'Long wait time' },
-  { value: 'other',     label: 'Other' },
-];
 
 export default function CaseDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -37,20 +29,27 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
   const [rating, setRating] = useState(0);
 
   if (loading) return <div className="p-4"><Skeleton className="h-64 w-full" /></div>;
-  if (!caseData) return <div className="p-4 text-center">Case not found</div>;
+  if (!caseData) return <div className="p-4 text-center">{t('case.notFound')}</div>;
 
   const status = caseData.status as CaseStatus;
   const canCancel = [CaseStatus.ASSIGNMENT_PENDING, CaseStatus.APPOINTMENT_SCHEDULED].includes(status);
+
+  const CANCEL_REASONS = [
+    { value: 'mistake',   label: t('case.cancelReasons.mistake') },
+    { value: 'other_ws',  label: t('case.cancelReasons.other_ws') },
+    { value: 'long_wait', label: t('case.cancelReasons.long_wait') },
+    { value: 'other',     label: t('case.cancelReasons.other') },
+  ];
 
   const handleCancel = async () => {
     if (!cancelReason) return;
     setCancelling(true);
     try {
       await api.post(`/cases/${id}/cancel`, { reason: cancelReason });
-      toast.success('Booking cancelled');
+      toast.success(t('case.cancelSuccess'));
       setShowCancel(false);
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed to cancel');
+      toast.error(err instanceof Error ? err.message : t('case.cancelFailed'));
     } finally {
       setCancelling(false);
     }
@@ -60,9 +59,9 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
     setRating(stars);
     try {
       await api.post(`/cases/${id}/rate`, { rating: stars });
-      toast.success('Thank you for your rating!');
+      toast.success(t('case.rateSuccess'));
     } catch {
-      toast.error('Failed to submit rating');
+      toast.error(t('case.rateFailed'));
     }
   };
 
@@ -72,7 +71,7 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
         <Button variant="ghost" size="icon" onClick={() => router.push('/accidents')}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-lg font-bold">Case {id}</h1>
+        <h1 className="text-lg font-bold">{t('case.title', { id: id.slice(0, 8) })}</h1>
       </div>
 
       {/* Status */}
@@ -91,11 +90,11 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-2 text-sm">
-          <div><span className="text-muted-foreground">Make: </span>{caseData.vehicle.make}</div>
-          <div><span className="text-muted-foreground">Model: </span>{caseData.vehicle.model}</div>
-          <div><span className="text-muted-foreground">Year: </span>{caseData.vehicle.year}</div>
-          <div><span className="text-muted-foreground">Plate: </span>{caseData.vehicle.plate}</div>
-          <div className="col-span-2"><span className="text-muted-foreground">Color: </span>{caseData.vehicle.color}</div>
+          <div><span className="text-muted-foreground">{t('case.make')}: </span>{caseData.vehicle.make}</div>
+          <div><span className="text-muted-foreground">{t('case.model')}: </span>{caseData.vehicle.model}</div>
+          <div><span className="text-muted-foreground">{t('case.year')}: </span>{caseData.vehicle.year}</div>
+          <div><span className="text-muted-foreground">{t('case.plate')}: </span>{caseData.vehicle.plate}</div>
+          <div className="col-span-2"><span className="text-muted-foreground">{t('case.color')}: </span>{caseData.vehicle.color}</div>
         </CardContent>
       </Card>
 
@@ -139,11 +138,11 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('case.cancel')}</DialogTitle>
-            <DialogDescription>Please tell us why you&apos;re cancelling</DialogDescription>
+            <DialogDescription>{t('case.cancelDialogDesc')}</DialogDescription>
           </DialogHeader>
           <Select onValueChange={setCancelReason}>
             <SelectTrigger>
-              <SelectValue placeholder="Select a reason" />
+              <SelectValue placeholder={t('case.selectReason')} />
             </SelectTrigger>
             <SelectContent>
               {CANCEL_REASONS.map((r) => (
@@ -161,7 +160,7 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
               disabled={!cancelReason || cancelling}
               className="flex-1"
             >
-              {cancelling ? 'Cancelling…' : t('actions.confirm')}
+              {cancelling ? t('case.cancelling') : t('actions.confirm')}
             </Button>
           </div>
         </DialogContent>
