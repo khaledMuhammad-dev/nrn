@@ -1,8 +1,6 @@
 'use client';
 
 import { useRef, useState, useCallback } from 'react';
-import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage } from '@/lib/firebase';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
@@ -26,28 +24,29 @@ export function FileUpload({ path, accept = 'image/*,.pdf', onUploadComplete, la
 
   const upload = useCallback(async (file: File) => {
     setUploading(true);
-    setProgress(0);
-    const filename = `${Date.now()}_${file.name}`;
-    const fileRef = storageRef(storage, `${path}/${filename}`);
-    const task = uploadBytesResumable(fileRef, file);
+    setProgress(30);
 
-    task.on(
-      'state_changed',
-      (snap) => setProgress((snap.bytesTransferred / snap.totalBytes) * 100),
-      (err) => { console.error(err); setUploading(false); },
-      async () => {
-        const url = await getDownloadURL(task.snapshot.ref);
-        setPreviewUrl(URL.createObjectURL(file));
-        onUploadComplete(url);
-        setUploading(false);
-        setProgress(100);
-      }
-    );
+    const filePath = `${path}/${Date.now()}_${file.name}`;
+    const form = new FormData();
+    form.append('file', file);
+    form.append('path', filePath);
+
+    try {
+      setProgress(60);
+      const res = await fetch('/api/upload', { method: 'POST', body: form });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? 'Upload failed');
+      setPreviewUrl(URL.createObjectURL(file));
+      onUploadComplete(json.data.url);
+      setProgress(100);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
   }, [path, onUploadComplete]);
 
-  const handleFile = (file: File | undefined) => {
-    if (file) upload(file);
-  };
+  const handleFile = (file: File | undefined) => { if (file) upload(file); };
 
   return (
     <div

@@ -7,8 +7,6 @@ import { SignaturePad } from '@/components/shared/SignaturePad';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ref as storageRef, uploadString, getDownloadURL } from 'firebase/storage';
-import { storage } from '@/lib/firebase';
 import { ArrowLeft, Car } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/axios';
@@ -25,9 +23,14 @@ export default function ReceiveCarPage({ params }: { params: { id: string } }) {
   const handleSignature = async (dataUrl: string) => {
     setSaving(true);
     try {
-      const fileRef = storageRef(storage, `signatures/${id}/receive_${Date.now()}.png`);
-      await uploadString(fileRef, dataUrl, 'data_url');
-      const signatureUrl = await getDownloadURL(fileRef);
+      const blob = await (await fetch(dataUrl)).blob();
+      const form = new FormData();
+      form.append('file', blob, `receive_${Date.now()}.png`);
+      form.append('path', `signatures/${id}/receive_${Date.now()}.png`);
+      const uploadRes = await fetch('/api/upload', { method: 'POST', body: form });
+      const uploadJson = await uploadRes.json();
+      if (!uploadRes.ok) throw new Error(uploadJson.error ?? 'Upload failed');
+      const signatureUrl = uploadJson.data.url;
       await api.post(`/cases/${id}/receive`, { signatureUrl });
       toast.success('Car received!');
       router.push(`/orders/${id}`);
