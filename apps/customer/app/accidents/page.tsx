@@ -66,9 +66,9 @@ export default function AccidentsPage() {
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">{t('accidents.title')}</h1>
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <h1 className="text-xl font-bold truncate">{t('accidents.title')}</h1>
+        <div className="flex items-center gap-2 shrink-0">
           <Button
             size="sm"
             onClick={handleAddAccident}
@@ -80,12 +80,12 @@ export default function AccidentsPage() {
           </Button>
           <Button
             variant="outline"
-            size="sm"
+            size="icon"
             onClick={() => setShowStartOver(true)}
-            className="gap-1.5 text-muted-foreground"
+            className="text-muted-foreground shrink-0"
+            title={t('actions.startOver')}
           >
             <RotateCcw className="h-3.5 w-3.5" />
-            {t('actions.startOver')}
           </Button>
         </div>
       </div>
