@@ -6,10 +6,12 @@ import { Toaster } from 'sonner';
 import { queryClient } from '@/lib/queryClient';
 import { AuthProvider } from './AuthProvider';
 import { SplashScreen } from '@/components/shared/SplashScreen';
+import { SplashProvider } from '@/components/shared/SplashContext';
 import '@/lib/i18n';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
+    <SplashProvider>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         <AuthProvider>
@@ -19,5 +21,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
+    </SplashProvider>
   );
 }

@@ -7,11 +7,13 @@ import { Button } from '@/components/ui/button';
 import { NotificationBell } from './NotificationPanel';
 import { NrnLogo } from '@/components/shared/NrnLogo';
 import { useAuth } from '@/hooks/useAuth';
+import { useSplash } from '@/components/shared/SplashContext';
 
 export function Header() {
   const { theme, setTheme } = useTheme();
   const { i18n } = useTranslation();
   const { user, profile, logout } = useAuth();
+  const { splashDone, logoRef } = useSplash();
 
   const toggleLang = () => {
     const next = i18n.language === 'en' ? 'ar' : 'en';
@@ -22,8 +24,13 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-background px-4 shadow-sm">
-      <div className="flex items-center gap-2">
-        <NrnLogo size={28} layoutId="nrn-logo" />
+      <div
+        ref={logoRef}
+        className={`flex items-center gap-2 transition-opacity duration-150 ${
+          splashDone ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <NrnLogo size={28} />
       </div>
 
       <div className="flex items-center gap-1">
