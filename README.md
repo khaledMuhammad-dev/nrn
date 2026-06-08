@@ -13,7 +13,7 @@ Full-stack insurance-to-repair platform built as a Turborepo monorepo with four 
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - pnpm 8+
 - A Firebase project with Firestore enabled
 
