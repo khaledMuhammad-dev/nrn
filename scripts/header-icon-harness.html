@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Header Icon Harness</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 24px; background: #0f172a; color: #e2e8f0; }
+    .row { display: flex; gap: 32px; margin-top: 24px; }
+    .icon-btn {
+      width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; background: rgba(255,255,255,0.06); cursor: pointer;
+    }
+    .hit { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .star-path { fill: currentColor; stroke: none; opacity: 0; transform: scale(0); transform-box: fill-box; transform-origin: center; }
+  </style>
+</head>
+<body>
+  <h1>Header Icon Animation Harness</h1>
+  <div class="row" id="icons"></div>
+  <script>
+    const PATHS = {
+      globe: { body: 'M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20 M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20 M2 12h20' },
+      bell: {
+        dome: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9',
+        clapper: 'M10.3 21a1.94 1.94 0 0 0 3.4 0',
+      },
+      moon: {
+        crescent: 'M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z',
+        stars: [
+          'M10 1.5L10.6 2.8L12 3.2L10.6 3.6L10 5L9.4 3.6L8 3.2L9.4 2.8Z',
+          'M19 4.5L19.5 5.6L20.6 6L19.5 6.4L19 7.5L18.5 6.4L17.4 6L18.5 5.6Z',
+          'M7.5 14.5L8 15.5L9 15.9L8 16.3L7.5 17.5L7 16.3L6 15.9L7 15.5Z',
+          'M20.5 12.5L21 13.4L21.9 13.8L21 14.2L20.5 15.2L20 14.2L19.1 13.8L20 13.4Z',
+        ],
+      },
+      sun: {
+        center: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8',
+        rays: 'M12 2v2 M12 20v2 M4.93 4.93l1.41 1.41 M17.66 17.66l1.41 1.41 M2 12h2 M20 12h2 M6.34 17.66l-1.41 1.41 M19.07 4.93l-1.41 1.41',
+        raysHover: 'M12 1v3 M12 21v2 M3.5 3.5l2 2 M18.5 18.5l2 2 M1 12h3 M21 12h2 M5 19l-2 2 M20 3.5l-2 2',
+      },
+      logout: {
+        door: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4',
+        chevron: 'M16 17L21 12L16 7',
+        shaft: 'M21 12H9',
+      },
+    };
+
+    function morphPath(pathEl, from, to, duration, onComplete) {
+      let interpolator;
+      try { interpolator = flubber.interpolate(from, to); }
+      catch { pathEl.setAttribute('d', to); onComplete?.(); return gsap.delayedCall(0, onComplete); }
+      const state = { progress: 0 };
+      return gsap.to(state, {
+        progress: 1, duration, ease: 'power2.inOut',
+        onUpdate: () => pathEl.setAttribute('d', interpolator(state.progress)),
+        onComplete,
+      });
+    }
+
+    function mountVariant(variant) {
+      const btn = document.createElement('div');
+      btn.className = 'icon-btn';
+      btn.dataset.variant = variant;
+      const hit = document.createElement('div');
+      hit.className = 'hit';
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('width', '16');
+      svg.setAttribute('height', '16');
+      let tween = null;
+      const kill = () => { tween?.kill(); tween = null; };
+
+      const onEnter = () => {
+        kill();
+        if (variant === 'globe') {
+          gsap.set(svg, { rotation: 0, scale: 1, transformOrigin: '50% 50%' });
+          tween = gsap.timeline()
+            .to(svg, { rotation: 360, scale: 1.1, duration: 0.7, ease: 'power2.inOut' })
+            .to(svg, { scale: 1, duration: 0.15, ease: 'power2.out' });
+        } else if (variant === 'bell') {
+          const dome = svg.querySelector('.bell-dome');
+          const clapper = svg.querySelector('.bell-clapper');
+          gsap.set(dome, { transformOrigin: '12px 3px', rotation: 0 });
+          gsap.set(clapper, { transformOrigin: '12px 20px', rotation: 0 });
+          tween = gsap.timeline()
+            .to(dome, { rotation: -16, duration: 0.1, ease: 'sine.inOut' }, 0)
+            .to(clapper, { rotation: 24, duration: 0.11, ease: 'sine.inOut' }, 0.03)
+            .to(dome, { rotation: 16, duration: 0.11, ease: 'sine.inOut' }, 0.1)
+            .to(clapper, { rotation: -22, duration: 0.11, ease: 'sine.inOut' }, 0.12)
+            .to(dome, { rotation: -10, duration: 0.09, ease: 'sine.inOut' }, 0.2)
+            .to(clapper, { rotation: 14, duration: 0.09, ease: 'sine.inOut' }, 0.21)
+            .to(dome, { rotation: 8, duration: 0.08, ease: 'sine.inOut' }, 0.28)
+            .to(clapper, { rotation: -10, duration: 0.08, ease: 'sine.inOut' }, 0.29)
+            .to(dome, { rotation: 0, duration: 0.1, ease: 'sine.out' }, 0.36)
+            .to(clapper, { rotation: 0, duration: 0.1, ease: 'sine.out' }, 0.36);
+        } else if (variant === 'moon') {
+          const moonG = svg.querySelector('.moon-body');
+          const stars = svg.querySelectorAll('.star-path');
+          gsap.set(stars, { opacity: 0, scale: 0, transformOrigin: '50% 50%' });
+          tween = gsap.timeline()
+            .to(moonG, { scale: 1.08, duration: 0.4, ease: 'power2.out' }, 0)
+            .to(stars, { opacity: 1, scale: 1, duration: 0.35, stagger: 0.07, ease: 'back.out(3)' }, 0.04);
+        } else if (variant === 'sun') {
+          const raysGroup = svg.querySelector('.sun-rays-group');
+          const rays = svg.querySelector('.sun-rays');
+          gsap.set(raysGroup, { transformOrigin: '12px 12px', rotation: 0, scale: 1 });
+          rays.setAttribute('d', PATHS.sun.rays);
+          tween = gsap.timeline()
+            .to(raysGroup, { rotation: 45, scale: 1.15, duration: 0.55, ease: 'power2.out' }, 0)
+            .add(morphPath(rays, PATHS.sun.rays, PATHS.sun.raysHover, 0.45), 0);
+        } else if (variant === 'logout') {
+          const arrow = svg.querySelector('.logout-arrow');
+          gsap.set(arrow, { x: 0, opacity: 1 });
+          tween = gsap.timeline()
+            .to(arrow, { x: -12, opacity: 0.1, duration: 0.3, ease: 'power2.in' })
+            .to({}, { duration: 0.12 })
+            .to(arrow, { x: 0, opacity: 1, duration: 0.35, ease: 'back.out(2.5)' });
+        }
+      };
+
+      const onLeave = () => {
+        kill();
+        if (variant === 'globe') gsap.set(svg, { rotation: 0, scale: 1 });
+        if (variant === 'bell') {
+          gsap.set(svg.querySelector('.bell-dome'), { rotation: 0 });
+          gsap.set(svg.querySelector('.bell-clapper'), { rotation: 0 });
+        }
+        if (variant === 'moon') {
+          gsap.set(svg.querySelector('.moon-body'), { scale: 1 });
+          gsap.set(svg.querySelectorAll('.star-path'), { opacity: 0, scale: 0 });
+        }
+        if (variant === 'sun') {
+          gsap.set(svg.querySelector('.sun-rays-group'), { rotation: 0, scale: 1 });
+          svg.querySelector('.sun-rays').setAttribute('d', PATHS.sun.rays);
+        }
+        if (variant === 'logout') gsap.set(svg.querySelector('.logout-arrow'), { x: 0, opacity: 1 });
+      };
+
+      hit.addEventListener('mouseenter', onEnter);
+      hit.addEventListener('mouseleave', onLeave);
+
+      if (variant === 'globe') {
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', PATHS.globe.body);
+        svg.appendChild(p);
+      } else if (variant === 'bell') {
+        const dome = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        dome.classList.add('bell-dome');
+        const domePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        domePath.setAttribute('d', PATHS.bell.dome);
+        dome.appendChild(domePath);
+        const clapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        clapper.classList.add('bell-clapper');
+        const clapperPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        clapperPath.setAttribute('d', PATHS.bell.clapper);
+        clapper.appendChild(clapperPath);
+        svg.appendChild(dome); svg.appendChild(clapper);
+      } else if (variant === 'moon') {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.classList.add('moon-body');
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', PATHS.moon.crescent);
+        g.appendChild(p); svg.appendChild(g);
+        PATHS.moon.stars.forEach((d) => {
+          const s = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          s.setAttribute('d', d); s.classList.add('star-path');
+          svg.appendChild(s);
+        });
+      } else if (variant === 'sun') {
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        c.setAttribute('d', PATHS.sun.center);
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.classList.add('sun-rays-group');
+        const r = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        r.classList.add('sun-rays');
+        r.setAttribute('d', PATHS.sun.rays);
+        g.appendChild(r); svg.appendChild(c); svg.appendChild(g);
+      } else if (variant === 'logout') {
+        const door = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        door.setAttribute('d', PATHS.logout.door);
+        const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        arrow.classList.add('logout-arrow');
+        const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        chevron.setAttribute('d', PATHS.logout.chevron);
+        const shaft = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        shaft.setAttribute('d', PATHS.logout.shaft);
+        arrow.appendChild(chevron); arrow.appendChild(shaft);
+        svg.appendChild(door); svg.appendChild(arrow);
+      }
+
+      hit.appendChild(svg);
+      btn.appendChild(hit);
+      document.getElementById('icons').appendChild(btn);
+    }
+
+    ['globe', 'bell', 'moon', 'sun', 'logout'].forEach(mountVariant);
+  </script>
+</body>
+</html>

@@ -1,8 +1,10 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, X, Check } from 'lucide-react';
+import { X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { HeaderIconButton } from '@/components/shared/HeaderIconButton';
+import { AnimatedHeaderIcon } from '@/components/shared/AnimatedHeaderIcon';
 import { useNotifications } from '@/hooks/useNotifications';
 import { formatDateTime, toDate } from '@nrn/shared';
 import { cn } from '@/lib/utils';
@@ -18,12 +20,12 @@ export function NotificationBell({ userId, lang = 'en' }: NotificationPanelProps
 
   return (
     <div className="relative">
-      <Button variant="ghost" size="icon" onClick={() => setOpen((o: boolean) => !o)} className="relative">
+      <HeaderIconButton onClick={() => setOpen((o: boolean) => !o)} className="relative">
         <motion.div
           animate={unreadCount > 0 ? { rotate: [0, 15, -15, 10, -10, 0] } : {}}
           transition={{ duration: 0.5, repeat: unreadCount > 0 ? Infinity : 0, repeatDelay: 5 }}
         >
-          <Bell className="h-5 w-5" />
+          <AnimatedHeaderIcon variant="bell" size={20} />
         </motion.div>
         {unreadCount > 0 && (
           <motion.span
@@ -34,7 +36,7 @@ export function NotificationBell({ userId, lang = 'en' }: NotificationPanelProps
             {unreadCount > 9 ? '9+' : unreadCount}
           </motion.span>
         )}
-      </Button>
+      </HeaderIconButton>
 
       <AnimatePresence>
         {open && (

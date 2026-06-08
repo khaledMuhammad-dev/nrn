@@ -2,11 +2,10 @@
 
 import { useTheme } from 'next-themes';
 import { useTranslation } from 'react-i18next';
-import { Sun, Moon, Globe, LogOut, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { NotificationBell } from './NotificationPanel';
+import { HeaderIconButton } from '@/components/shared/HeaderIconButton';
+import { AnimatedHeaderIcon } from '@/components/shared/AnimatedHeaderIcon';
 import { useAuth } from '@/hooks/useAuth';
-import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   appName?: string;
@@ -34,18 +33,25 @@ export function Header({ appName = 'NRN' }: HeaderProps) {
       <div className="flex items-center gap-1">
         {profile && <NotificationBell userId={profile.id} lang={i18n.language as 'en' | 'ar'} />}
 
-        <Button variant="ghost" size="icon" onClick={toggleLang} title="Toggle language">
-          <Globe className="h-4 w-4" />
-        </Button>
+        <HeaderIconButton onClick={toggleLang} title="Toggle language">
+          <AnimatedHeaderIcon variant="globe" size={16} />
+        </HeaderIconButton>
 
-        <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} title="Toggle theme">
-          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-        </Button>
+        <HeaderIconButton
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          title="Toggle theme"
+        >
+          <AnimatedHeaderIcon variant={theme === 'dark' ? 'sun' : 'moon'} size={16} />
+        </HeaderIconButton>
 
         {profile && (
-          <Button variant="ghost" size="icon" onClick={logout} title="Log out" className="text-destructive hover:text-destructive hover:bg-destructive/10">
-            <LogOut className="h-4 w-4 rtl:rotate-180" />
-          </Button>
+          <HeaderIconButton
+            onClick={logout}
+            title="Log out"
+            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+          >
+            <AnimatedHeaderIcon variant="logout" size={16} className="rtl:scale-x-[-1]" />
+          </HeaderIconButton>
         )}
       </div>
     </header>

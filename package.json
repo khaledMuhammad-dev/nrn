@@ -8,9 +8,12 @@
     "test:ts": "turbo run test:ts",
     "lint": "turbo run lint",
     "seed": "tsx scripts/seed.ts",
+    "verify:header-icons": "tsx scripts/verify-header-animations.ts",
     "clean": "turbo run clean"
   },
   "devDependencies": {
+    "flubber": "^0.4.2",
+    "playwright": "^1.52.0",
     "dotenv": "^17.4.2",
     "firebase-admin": "^12.7.0",
     "tsx": "^4.22.4",

@@ -57,6 +57,7 @@ export function AnimatedHeaderIcon({ variant, size = 16, className }: AnimatedHe
   const raysGroupRef = useRef<SVGGElement>(null);
   const raysPathRef = useRef<SVGPathElement>(null);
   const arrowGroupRef = useRef<SVGGElement>(null);
+  const doorPathRef = useRef<SVGPathElement>(null);
   const tweenRef = useRef<gsap.core.Tween | gsap.core.Timeline | null>(null);
 
   const killTween = useCallback(() => {
@@ -132,14 +133,19 @@ export function AnimatedHeaderIcon({ variant, size = 16, className }: AnimatedHe
       return;
     }
 
-    if (variant === 'logout' && arrowGroupRef.current) {
+    if (variant === 'logout' && arrowGroupRef.current && doorPathRef.current) {
       const arrow = arrowGroupRef.current;
+      const door = doorPathRef.current;
+      const { door: closed, doorOpen: open } = HEADER_ICON_PATHS.logout;
       gsap.set(arrow, { x: 0, opacity: 1 });
-      tweenRef.current = gsap
-        .timeline()
-        .to(arrow, { x: -12, opacity: 0.1, duration: 0.3, ease: 'power2.in' })
-        .to({}, { duration: 0.12 })
-        .to(arrow, { x: 0, opacity: 1, duration: 0.35, ease: 'back.out(2.5)' });
+      door.setAttribute('d', closed);
+      const tl = gsap.timeline();
+      tl.add(morphPath(door, closed, open, 0.25), 0); // door swings ajar
+      tl.to(arrow, { x: 14, opacity: 0, duration: 0.3, ease: 'power2.in' }, 0.05); // arrow exits right
+      tl.set(arrow, { x: -10 }, 0.5); // wrap to left of door
+      tl.to(arrow, { x: 0, opacity: 1, duration: 0.35, ease: 'back.out(2)' }, 0.55); // re-enter
+      tl.add(morphPath(door, open, closed, 0.25), 0.6); // door closes
+      tweenRef.current = tl;
     }
   }, [variant, killTween]);
 
@@ -170,8 +176,9 @@ export function AnimatedHeaderIcon({ variant, size = 16, className }: AnimatedHe
       return;
     }
 
-    if (variant === 'logout' && arrowGroupRef.current) {
-      gsap.set(arrowGroupRef.current, { x: 0, opacity: 1 });
+    if (variant === 'logout') {
+      if (arrowGroupRef.current) gsap.set(arrowGroupRef.current, { x: 0, opacity: 1 });
+      if (doorPathRef.current) doorPathRef.current.setAttribute('d', HEADER_ICON_PATHS.logout.door);
     }
   }, [variant, killTween]);
 
@@ -236,7 +243,7 @@ export function AnimatedHeaderIcon({ variant, size = 16, className }: AnimatedHe
 
         {variant === 'logout' && (
           <>
-            <path d={HEADER_ICON_PATHS.logout.door} />
+            <path ref={doorPathRef} className="logout-door" d={HEADER_ICON_PATHS.logout.door} />
             <g ref={arrowGroupRef} className="logout-arrow">
               <path d={HEADER_ICON_PATHS.logout.chevron} />
               <path d={HEADER_ICON_PATHS.logout.shaft} />
