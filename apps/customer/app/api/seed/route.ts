@@ -25,14 +25,19 @@ export async function POST() {
     }
     const customerUid = usersSnap.docs[0].id;
 
-    // Clear transient data
+    // Clear all transient data including all cases
     await Promise.all([
+      clearCollection('cases'),
       clearCollection('estimates'),
       clearCollection('invoices'),
       clearCollection('notifications'),
+      clearCollection('inspections'),
+      clearCollection('handovers'),
+      clearCollection('partsRequests'),
+      clearCollection('workOrders'),
     ]);
 
-    // Reset the case
+    // Re-create the initial demo case
     await adminDb.collection('cases').doc('case_001').set({
       id: 'case_001',
       customerId: customerUid,

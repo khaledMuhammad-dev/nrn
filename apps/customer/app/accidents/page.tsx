@@ -27,7 +27,7 @@ export default function AccidentsPage() {
   const [resetting, setResetting] = useState(false);
   const [addingAccident, setAddingAccident] = useState(false);
   const [filter, setFilter] = useState<FilterGroup>('all');
-  const { cases, counts, loading: casesLoading } = useCases(profile?.id, undefined, filter);
+  const { cases, counts, loading: casesLoading, refetch } = useCases(profile?.id, undefined, filter);
 
   const loading = authLoading || casesLoading;
 
@@ -58,6 +58,7 @@ export default function AccidentsPage() {
       await api.post('/seed');
       toast.success(t('actions.startOverSuccess'));
       setShowStartOver(false);
+      refetch();
     } catch {
       toast.error(t('actions.startOverFailed'));
     } finally {
@@ -100,7 +101,7 @@ export default function AccidentsPage() {
       </div>
 
       {/* Filter strip */}
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none pb-6">
+      <div className="flex gap-2 overflow-x-auto -mx-4 px-4 scrollbar-none pb-6">
         {FILTERS.map(({ key, label }) => (
           <button
             key={key}

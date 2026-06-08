@@ -39,6 +39,9 @@ export function useCases(customerId?: string, workshopId?: string, filter: Filte
   const [cases, setCases] = useState<Case[]>([]);
   const [counts, setCounts] = useState<CaseCounts>({ all: 0, active: 0, pickup: 0, closed: 0 });
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refetch = () => setRefreshKey((k) => k + 1);
 
   useEffect(() => {
     if (!customerId && !workshopId) {
@@ -84,7 +87,7 @@ export function useCases(customerId?: string, workshopId?: string, filter: Filte
       (_err) => setLoading(false),
     );
     return unsub;
-  }, [customerId, workshopId, filter]);
+  }, [customerId, workshopId, filter, refreshKey]);
 
-  return { cases, counts, loading };
+  return { cases, counts, loading, refetch };
 }
