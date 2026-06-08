@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CheckCircle, XCircle, FileText } from 'lucide-react';
+import { CheckCircle, XCircle, FileText, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/axios';
 
@@ -26,8 +26,12 @@ export default function ApprovalsPage() {
   const { t } = useTranslation();
   const [estimates, setEstimates] = useState<Estimate[]>([]);
   const [invoices,  setInvoices]  = useState<Invoice[]>([]);
-  const [loading, setLoading]     = useState(true);
+  const [loading, setLoading]       = useState(true);
+  const [processing, setProcessing] = useState<Record<string, boolean>>({});
   const [rejectReasons, setRejectReasons] = useState<Record<string, string>>({});
+
+  const startProcessing = (caseId: string) => setProcessing((p) => ({ ...p, [caseId]: true }));
+  const stopProcessing  = (caseId: string) => setProcessing((p) => ({ ...p, [caseId]: false }));
 
   useEffect(() => {
     let estReady = false;
@@ -56,26 +60,35 @@ export default function ApprovalsPage() {
   }, []);
 
   const handleApproveEstimate = async (caseId: string) => {
+    startProcessing(caseId);
     try {
       await api.post(`/cases/${caseId}/approve-estimate`);
       toast.success(t('approvals.approveSuccess'));
-    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : t('approvals.failed')); }
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : t('approvals.failed'));
+    } finally { stopProcessing(caseId); }
   };
 
   const handleRejectEstimate = async (caseId: string) => {
     const reason = rejectReasons[caseId];
     if (!reason) { toast.error(t('approvals.rejectPlaceholder')); return; }
+    startProcessing(caseId);
     try {
       await api.post(`/cases/${caseId}/reject-estimate`, { reason });
       toast.info(t('approvals.rejectSuccess'));
-    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : t('approvals.failed')); }
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : t('approvals.failed'));
+    } finally { stopProcessing(caseId); }
   };
 
   const handleApproveInvoice = async (caseId: string) => {
+    startProcessing(caseId);
     try {
       await api.post(`/cases/${caseId}/approve-invoice`);
       toast.success(t('approvals.approveSuccess'));
-    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : t('approvals.failed')); }
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : t('approvals.failed'));
+    } finally { stopProcessing(caseId); }
   };
 
   return (
@@ -130,11 +143,26 @@ export default function ApprovalsPage() {
                       onChange={(e) => setRejectReasons((p) => ({ ...p, [est.caseId]: e.target.value }))}
                     />
                     <div className="flex gap-3">
-                      <Button variant="destructive" className="flex-1" onClick={() => handleRejectEstimate(est.caseId)}>
-                        <XCircle className="mr-2 h-4 w-4" /> {t('approvals.reject')}
+                      <Button
+                        variant="destructive"
+                        className="flex-1"
+                        disabled={processing[est.caseId]}
+                        onClick={() => handleRejectEstimate(est.caseId)}
+                      >
+                        {processing[est.caseId]
+                          ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          : <XCircle className="mr-2 h-4 w-4" />}
+                        {processing[est.caseId] ? t('approvals.processing') : t('approvals.reject')}
                       </Button>
-                      <Button className="flex-1 bg-green-600 hover:bg-green-700" onClick={() => handleApproveEstimate(est.caseId)}>
-                        <CheckCircle className="mr-2 h-4 w-4" /> {t('approvals.approve')}
+                      <Button
+                        className="flex-1 bg-green-600 hover:bg-green-700"
+                        disabled={processing[est.caseId]}
+                        onClick={() => handleApproveEstimate(est.caseId)}
+                      >
+                        {processing[est.caseId]
+                          ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          : <CheckCircle className="mr-2 h-4 w-4" />}
+                        {processing[est.caseId] ? t('approvals.processing') : t('approvals.approve')}
                       </Button>
                     </div>
                   </CardContent>
@@ -154,8 +182,15 @@ export default function ApprovalsPage() {
                   </CardHeader>
                   <CardContent className="flex flex-col gap-3">
                     <div className="text-2xl font-bold text-[var(--brand-accent)]">SAR {inv.amount.toLocaleString()}</div>
-                    <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => handleApproveInvoice(inv.caseId)}>
-                      <CheckCircle className="mr-2 h-4 w-4" /> {t('approvals.approve')}
+                    <Button
+                      className="w-full bg-green-600 hover:bg-green-700"
+                      disabled={processing[inv.caseId]}
+                      onClick={() => handleApproveInvoice(inv.caseId)}
+                    >
+                      {processing[inv.caseId]
+                        ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        : <CheckCircle className="mr-2 h-4 w-4" />}
+                      {processing[inv.caseId] ? t('approvals.processing') : t('approvals.approve')}
                     </Button>
                   </CardContent>
                 </Card>
