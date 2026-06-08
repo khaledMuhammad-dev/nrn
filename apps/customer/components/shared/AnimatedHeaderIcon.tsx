@@ -79,20 +79,24 @@ export function AnimatedHeaderIcon({ variant, size = 16, className }: AnimatedHe
     if (variant === 'bell' && bellDomeRef.current && clapperRef.current) {
       const dome = bellDomeRef.current;
       const clapper = clapperRef.current;
-      gsap.set(dome, { transformOrigin: '12px 3px', rotation: 0 });
-      gsap.set(clapper, { transformOrigin: '12px 20px', rotation: 0 });
+      gsap.set(dome, { transformOrigin: '50% 0%', rotation: 0 });
+      gsap.set(clapper, { x: 0 });
       tweenRef.current = gsap
         .timeline()
-        .to(dome, { rotation: -16, duration: 0.1, ease: 'sine.inOut' }, 0)
-        .to(clapper, { rotation: 24, duration: 0.11, ease: 'sine.inOut' }, 0.03)
-        .to(dome, { rotation: 16, duration: 0.11, ease: 'sine.inOut' }, 0.1)
-        .to(clapper, { rotation: -22, duration: 0.11, ease: 'sine.inOut' }, 0.12)
-        .to(dome, { rotation: -10, duration: 0.09, ease: 'sine.inOut' }, 0.2)
-        .to(clapper, { rotation: 14, duration: 0.09, ease: 'sine.inOut' }, 0.21)
-        .to(dome, { rotation: 8, duration: 0.08, ease: 'sine.inOut' }, 0.28)
-        .to(clapper, { rotation: -10, duration: 0.08, ease: 'sine.inOut' }, 0.29)
-        .to(dome, { rotation: 0, duration: 0.1, ease: 'sine.out' }, 0.36)
-        .to(clapper, { rotation: 0, duration: 0.1, ease: 'sine.out' }, 0.36);
+        // Dome: damped ring from top mount — power2 per arc, ~60% decay
+        .to(dome, { rotation: -20, duration: 0.14, ease: 'power2.out' }, 0)
+        .to(dome, { rotation: 17, duration: 0.15, ease: 'power2.inOut' }, 0.14)
+        .to(dome, { rotation: -11, duration: 0.13, ease: 'power2.inOut' }, 0.29)
+        .to(dome, { rotation: 7, duration: 0.12, ease: 'power2.inOut' }, 0.42)
+        .to(dome, { rotation: -3, duration: 0.10, ease: 'power2.inOut' }, 0.54)
+        .to(dome, { rotation: 0, duration: 0.12, ease: 'power2.out' }, 0.64)
+        // Clapper: 40ms lag, translates opposite to dome (free pendulum inside moving bell)
+        .to(clapper, { x: 3.5, duration: 0.15, ease: 'power1.out' }, 0.04)
+        .to(clapper, { x: -2.8, duration: 0.15, ease: 'power1.inOut' }, 0.19)
+        .to(clapper, { x: 1.8, duration: 0.13, ease: 'power1.inOut' }, 0.34)
+        .to(clapper, { x: -1, duration: 0.12, ease: 'power1.inOut' }, 0.47)
+        .to(clapper, { x: 0.4, duration: 0.10, ease: 'power1.inOut' }, 0.59)
+        .to(clapper, { x: 0, duration: 0.12, ease: 'power1.out' }, 0.69);
       return;
     }
 
@@ -149,7 +153,7 @@ export function AnimatedHeaderIcon({ variant, size = 16, className }: AnimatedHe
 
     if (variant === 'bell') {
       if (bellDomeRef.current) gsap.set(bellDomeRef.current, { rotation: 0 });
-      if (clapperRef.current) gsap.set(clapperRef.current, { rotation: 0 });
+      if (clapperRef.current) gsap.set(clapperRef.current, { x: 0 });
       return;
     }
 
