@@ -25,7 +25,7 @@
   },
   "actions": { "cancel": "إلغاء", "confirm": "تأكيد", "back": "رجوع", "next": "التالي", "save": "حفظ", "startOver": "إعادة البدء", "startOverConfirm": "إعادة تهيئة العرض", "startOverDesc": "سيُعيد هذا الإجراء حالة العرض إلى البداية لتتمكن من تشغيل المسار الكامل مجدداً. سيُفقد كل التقدم الحالي.", "startOverSuccess": "تمت إعادة التهيئة! الحالة عادت إلى اختيار الورشة.", "startOverFailed": "فشلت إعادة التهيئة. حاول مجدداً." },
   "workshops": { "title": "البحث عن ورشة", "verified": "معتمد من نجم", "selectWorkshop": "اختيار الورشة", "rating": "التقييم", "available": "متاح", "busy": "مشغول", "services": "الخدمات", "slotsAvailable": "{{count}} موعد متاح", "noSlots": "لا توجد مواعيد متاحة", "searchPlaceholder": "البحث عن ورشة…", "filters": { "all": "الكل", "open": "مفتوح الآن", "top_rated": "الأعلى تقييماً" } },
-  "slots": { "title": "اختيار موعد", "confirm": "تأكيد الحجز", "selected": "الموعد المختار", "left": "{{count}} متبقٍ", "full": "ممتلئ", "booking": "جارٍ الحجز…" },
+  "slots": { "title": "اختيار موعد", "confirm": "تأكيد الحجز", "selected": "الموعد المختار", "left": "{{count}} متبقٍ", "full": "ممتلئ", "booking": "جارٍ الحجز…", "availableTimes": "الأوقات المتاحة", "empty": "لا توجد مواعيد متاحة", "slotsLeft": "{{count}} مواعيد" },
   "case": {
     "title": "الحالة {{id}}",
     "notFound": "الحالة غير موجودة",

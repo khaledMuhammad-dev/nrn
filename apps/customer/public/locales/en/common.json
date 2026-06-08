@@ -25,7 +25,7 @@
   },
   "actions": { "cancel": "Cancel", "confirm": "Confirm", "back": "Back", "next": "Next", "save": "Save", "startOver": "Start Over", "startOverConfirm": "Reset Demo", "startOverDesc": "This will reset the demo case back to the beginning so you can run the full happy-path again. All progress will be lost.", "startOverSuccess": "Demo reset! Case is back at Workshop Selection.", "startOverFailed": "Reset failed. Please try again." },
   "workshops": { "title": "Find a Workshop", "verified": "Najm Verified", "selectWorkshop": "Select Workshop", "rating": "Rating", "available": "Available", "busy": "Busy", "services": "Services", "slotsAvailable": "{{count}} slots available", "noSlots": "No available slots", "searchPlaceholder": "Search workshops…", "filters": { "all": "All", "open": "Open Now", "top_rated": "Top Rated" } },
-  "slots": { "title": "Pick a Slot", "confirm": "Confirm Booking", "selected": "Selected Slot", "left": "{{count}} left", "full": "Full", "booking": "Booking…" },
+  "slots": { "title": "Pick a Slot", "confirm": "Confirm Booking", "selected": "Selected Slot", "left": "{{count}} left", "full": "Full", "booking": "Booking…", "availableTimes": "Available times", "empty": "No available slots", "slotsLeft": "{{count}} slots" },
   "case": {
     "title": "Case {{id}}",
     "notFound": "Case not found",
