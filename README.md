@@ -95,6 +95,47 @@ ACCIDENT_REPORTED → WORKSHOP_SELECTION → ASSIGNMENT_PENDING
   → CANCELLED (from APPOINTMENT_SCHEDULED only)
 ```
 
+## Deploy to Netlify
+
+This monorepo ships four separate Next.js apps. Deploy **one Netlify site per app**, all connected to the same Git repository.
+
+| Surface | Base directory | Package filter |
+|---------|----------------|----------------|
+| Customer | `apps/customer` | `@nrn/customer` |
+| Workshop | `apps/workshop` | `@nrn/workshop` |
+| Admin | `apps/admin` | `@nrn/admin` |
+| Ops | `apps/ops` | `@nrn/ops` |
+
+Each app folder includes a `netlify.toml` with the build command, Node/pnpm versions, and the Next.js plugin.
+
+### Setup (repeat for each site)
+
+1. In [Netlify](https://app.netlify.com), **Add new site → Import an existing project** and connect this repo.
+2. Set **Base directory** to the app path (e.g. `apps/customer`). Netlify reads that app’s `netlify.toml`.
+3. Under **Site settings → Environment variables**, add every variable from `.env.example`:
+   - `NEXT_PUBLIC_FIREBASE_API_KEY`
+   - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+   - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+   - `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+   - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+   - `NEXT_PUBLIC_FIREBASE_APP_ID`
+   - `FIREBASE_ADMIN_PROJECT_ID`
+   - `FIREBASE_ADMIN_CLIENT_EMAIL`
+   - `FIREBASE_ADMIN_PRIVATE_KEY` (paste with `\n` for line breaks)
+   - `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+   - `VAPID_PRIVATE_KEY`
+   - `VAPID_EMAIL`
+4. In **Firebase Console → Authentication → Authorized domains**, add each Netlify URL (e.g. `your-site.netlify.app`).
+5. Run `pnpm run seed` locally once so Firestore has demo data before demoing production URLs.
+
+### CLI deploy (optional)
+
+```bash
+npm install -g netlify-cli
+netlify login
+cd apps/customer && netlify init && netlify deploy --prod
+```
+
 ## Running Tests
 
 ```bash
