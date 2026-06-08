@@ -5,8 +5,9 @@ import { transitionCase, verifyToken, jsonError, jsonSuccess } from '@/lib/apiHe
 import { CaseStatus, UserRole } from '@nrn/shared';
 
 const schema = z.object({
-  photos: z.array(z.string()).min(1),
-  notes:  z.string(),
+  photos:       z.array(z.string()).min(1),
+  photosBySlot: z.record(z.string()).optional(),
+  notes:        z.string(),
 });
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -20,9 +21,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     await inspRef.set({
       id: inspRef.id,
       caseId: id,
-      photos: body.data.photos,
-      notes: body.data.notes,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      photos:       body.data.photos,
+      photosBySlot: body.data.photosBySlot ?? {},
+      notes:        body.data.notes,
+      timestamp:    admin.firestore.FieldValue.serverTimestamp(),
     });
     const updated = await transitionCase({
       caseId:    id,

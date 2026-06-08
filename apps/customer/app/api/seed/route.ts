@@ -1,5 +1,14 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebaseAdmin';
+import { adminDb, adminStorage } from '@/lib/firebaseAdmin';
+
+function clearStoragePrefixes(prefixes: string[]): Promise<void>[] {
+  const bucketName = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+  if (!bucketName) return [];
+  const bucket = adminStorage.bucket(bucketName);
+  return prefixes.map((prefix) =>
+    bucket.deleteFiles({ prefix, force: true }).then(() => undefined)
+  );
+}
 
 async function clearCollection(name: string) {
   const snap = await adminDb.collection(name).get();
@@ -35,6 +44,7 @@ export async function POST() {
       clearCollection('handovers'),
       clearCollection('partsRequests'),
       clearCollection('workOrders'),
+      ...clearStoragePrefixes(['inspections/', 'signatures/']),
     ]);
 
     // Re-create the initial demo case

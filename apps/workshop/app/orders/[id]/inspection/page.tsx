@@ -1,11 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { FileUpload } from '@/components/shared/FileUpload';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Camera } from 'lucide-react';
 import { toast } from 'sonner';
@@ -16,18 +19,69 @@ export default function InspectionPage({ params }: { params: { id: string } }) {
   const router   = useRouter();
   const { t }    = useTranslation();
 
+  const DRAFT_KEY = `inspection_draft_${id}`;
+
   const PHOTO_SLOTS = [
-    t('order.angles.front'),
-    t('order.angles.rear'),
-    t('order.angles.driverSide'),
-    t('order.angles.passengerSide'),
-    t('order.angles.interior'),
-    t('order.angles.roof'),
+    { key: 'front',         label: t('order.angles.front') },
+    { key: 'rear',          label: t('order.angles.rear') },
+    { key: 'driverSide',    label: t('order.angles.driverSide') },
+    { key: 'passengerSide', label: t('order.angles.passengerSide') },
+    { key: 'interior',      label: t('order.angles.interior') },
+    { key: 'roof',          label: t('order.angles.roof') },
   ];
 
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [notes, setNotes]   = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [loadingDraft, setLoadingDraft] = useState(true);
+
+  useEffect(() => {
+    // Seed from localStorage immediately so the UI isn't blank while Firestore loads
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) setPhotos(JSON.parse(saved));
+    } catch {}
+
+    // Firestore submitted inspection wins over localStorage draft
+    getDocs(query(collection(db, 'inspections'), where('caseId', '==', id)))
+      .then((snap) => {
+        if (!snap.empty) {
+          const data = snap.docs[0].data();
+          if (data.photosBySlot && Object.keys(data.photosBySlot).length > 0) {
+            setPhotos(data.photosBySlot as Record<string, string>);
+          } else if (Array.isArray(data.photos) && data.photos.length > 0) {
+            const restored: Record<string, string> = {};
+            (data.photos as string[]).forEach((url, i) => {
+              if (PHOTO_SLOTS[i] && url) restored[PHOTO_SLOTS[i].key] = url;
+            });
+            setPhotos(restored);
+          }
+          if (data.notes) setNotes(data.notes as string);
+        }
+      })
+      .finally(() => setLoadingDraft(false));
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const saveDraft = (updated: Record<string, string>) => {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(updated)); } catch {}
+  };
+
+  const handleUpload = (key: string, url: string) => {
+    setPhotos((prev) => {
+      const next = { ...prev, [key]: url };
+      saveDraft(next);
+      return next;
+    });
+  };
+
+  const handleDelete = (key: string) => {
+    setPhotos((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      saveDraft(next);
+      return next;
+    });
+  };
 
   const hasMinPhoto = Object.keys(photos).length >= 1;
 
@@ -36,9 +90,11 @@ export default function InspectionPage({ params }: { params: { id: string } }) {
     setSubmitting(true);
     try {
       await api.post(`/cases/${id}/inspection`, {
-        photos: PHOTO_SLOTS.map((s) => photos[s]).filter(Boolean),
+        photos:       PHOTO_SLOTS.map((s) => photos[s.key]).filter(Boolean),
+        photosBySlot: photos,
         notes,
       });
+      try { localStorage.removeItem(DRAFT_KEY); } catch {}
       toast.success(t('order.submitSuccess'));
       router.push(`/orders/${id}/items`);
     } catch (err: unknown) {
@@ -47,6 +103,8 @@ export default function InspectionPage({ params }: { params: { id: string } }) {
       setSubmitting(false);
     }
   };
+
+  if (loadingDraft) return <div className="p-4"><Skeleton className="h-64 w-full" /></div>;
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -65,12 +123,13 @@ export default function InspectionPage({ params }: { params: { id: string } }) {
         <div className="grid grid-cols-2 gap-3">
           {PHOTO_SLOTS.map((slot) => (
             <FileUpload
-              key={slot}
+              key={slot.key}
               path={`inspections/${id}`}
               accept="image/*"
-              label={slot}
-              preview={photos[slot]}
-              onUploadComplete={(url) => setPhotos((prev) => ({ ...prev, [slot]: url }))}
+              label={slot.label}
+              preview={photos[slot.key]}
+              onUploadComplete={(url) => handleUpload(slot.key, url)}
+              onDelete={() => handleDelete(slot.key)}
               className="h-28"
             />
           ))}
