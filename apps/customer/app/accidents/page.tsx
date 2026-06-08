@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useCases, type FilterGroup } from '@/hooks/useCase';
 import { StatusBadge } from '@/components/case/StatusBadge';
-import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -103,23 +102,20 @@ export default function AccidentsPage() {
       {/* Filter strip */}
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none pb-6">
         {FILTERS.map(({ key, label }) => (
-          <Button
+          <button
             key={key}
-            asChild
-            size="sm"
-            variant={filter === key ? 'default' : 'ghost'}
-            className="shrink-0 rounded-full gap-1.5"
+            onClick={() => setFilter(key)}
+            className={`shrink-0 rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+              filter === key
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+            }`}
           >
-            <button onClick={() => setFilter(key)}>
-              {label}
-              <Badge
-                variant={filter === key ? 'secondary' : 'outline'}
-                className="px-1.5 py-0 text-xs"
-              >
-                {counts[key]}
-              </Badge>
-            </button>
-          </Button>
+            {label}
+            <span className={`ms-1.5 text-xs ${filter === key ? 'opacity-80' : 'opacity-60'}`}>
+              {counts[key]}
+            </span>
+          </button>
         ))}
       </div>
 
