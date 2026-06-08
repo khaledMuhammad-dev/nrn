@@ -71,7 +71,13 @@ export default function ReceiveCarPage({ params }: { params: { id: string } }) {
       {/* Signature */}
       <Card className="p-4">
         <h2 className="mb-3 font-semibold">{t('order.signature')}</h2>
-        <SignaturePad onSave={handleSignature} />
+        <SignaturePad
+          onSave={handleSignature}
+          description={{
+            en: `I, the undersigned, confirm that I am handing over the above vehicle (Ref: ${caseData.accidentRef}) to Al-Faris Auto Center and that the details stated herein are accurate. I authorize the center to carry out the necessary inspection and repair works on my behalf.`,
+            ar: `أنا الموقّع أدناه أقرّ بتسليم المركبة المذكورة أعلاه (المرجع: ${caseData.accidentRef}) إلى مركز الفارس للسيارات وأؤكد صحة البيانات الواردة في هذه الوثيقة. أفوّض المركز بإجراء أعمال الفحص والإصلاح اللازمة نيابةً عني.`,
+          }}
+        />
         {saving && <p className="mt-2 text-center text-sm text-muted-foreground">{t('order.saving')}</p>}
       </Card>
     </div>

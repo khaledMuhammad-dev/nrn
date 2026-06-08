@@ -4,12 +4,18 @@ import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
+interface BilingualText {
+  en: string;
+  ar: string;
+}
+
 interface SignaturePadProps {
   onSave: (dataUrl: string) => void;
+  description?: BilingualText;
   className?: string;
 }
 
-export function SignaturePad({ onSave, className }: SignaturePadProps) {
+export function SignaturePad({ onSave, description, className }: SignaturePadProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [drawing, setDrawing] = useState(false);
   const [hasContent, setHasContent] = useState(false);
@@ -77,6 +83,13 @@ export function SignaturePad({ onSave, className }: SignaturePadProps) {
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
+      {description && (
+        <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 flex flex-col gap-2">
+          <p className="text-sm text-foreground leading-relaxed" dir="ltr">{description.en}</p>
+          <div className="border-t border-border/50" />
+          <p className="text-sm text-foreground leading-relaxed text-right" dir="rtl">{description.ar}</p>
+        </div>
+      )}
       <div className="rounded-lg border-2 border-dashed border-gray-300 bg-white">
         <canvas
           ref={canvasRef}

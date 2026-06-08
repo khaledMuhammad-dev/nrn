@@ -65,7 +65,13 @@ export default function HandoverPage({ params }: { params: { id: string } }) {
 
       <Card className="p-4">
         <h2 className="mb-3 font-semibold">{t('order.signature')}</h2>
-        <SignaturePad onSave={handleSignature} />
+        <SignaturePad
+          onSave={handleSignature}
+          description={{
+            en: `I, the undersigned, confirm that the vehicle (${caseData?.vehicle.make} ${caseData?.vehicle.model} — Plate: ${caseData?.vehicle.plate}) has been returned to me in satisfactory condition upon completion of all agreed repair works. I acknowledge that all services have been rendered as described.`,
+            ar: `أنا الموقّع أدناه أؤكد استلام المركبة (${caseData?.vehicle.make} ${caseData?.vehicle.model} — اللوحة: ${caseData?.vehicle.plate}) في حالة مُرضية بعد إتمام جميع أعمال الإصلاح المتّفق عليها. أقرّ بأن جميع الخدمات قد نُفّذت على النحو المبيّن.`,
+          }}
+        />
         {saving && <p className="mt-2 text-center text-sm text-muted-foreground">{t('order.saving')}</p>}
       </Card>
     </div>

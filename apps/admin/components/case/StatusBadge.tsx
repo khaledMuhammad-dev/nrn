@@ -1,13 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { CaseStatus } from '@nrn/shared';
-import { CASE_STATUS_LABELS } from '@nrn/shared';
 import { cn } from '@/lib/utils';
 
 interface StatusBadgeProps {
   status: CaseStatus;
-  lang?: 'en' | 'ar';
   className?: string;
   animate?: boolean;
 }
@@ -24,8 +23,9 @@ function getStatusVariant(status: CaseStatus): string {
   return 'bg-[var(--status-active)] text-white';
 }
 
-export function StatusBadge({ status, lang = 'en', className, animate = true }: StatusBadgeProps) {
-  const label = CASE_STATUS_LABELS[status]?.[lang] ?? status;
+export function StatusBadge({ status, className, animate = true }: StatusBadgeProps) {
+  const { t } = useTranslation();
+  const label = t(`status.${status}`, { defaultValue: status });
   const colorClass = getStatusVariant(status);
 
   return (

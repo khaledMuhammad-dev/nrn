@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
@@ -27,6 +27,10 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
   const [cancelReason, setCancelReason] = useState('');
   const [cancelling, setCancelling] = useState(false);
   const [rating, setRating] = useState(0);
+
+  useEffect(() => {
+    if (caseData?.customerRating) setRating(caseData.customerRating);
+  }, [caseData?.customerRating]);
 
   if (loading) return <div className="p-4"><Skeleton className="h-64 w-full" /></div>;
   if (!caseData) return <div className="p-4 text-center">{t('case.notFound')}</div>;
@@ -77,7 +81,7 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
       {/* Status */}
       <Card className="p-4">
         <div className="flex items-center justify-between">
-          <StatusBadge status={status} lang={lang} />
+          <StatusBadge status={status} />
           <span className="font-mono text-xs text-muted-foreground">{caseData.accidentRef}</span>
         </div>
       </Card>
@@ -116,8 +120,9 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
-                onClick={() => handleRate(star)}
-                className="text-2xl transition-transform hover:scale-110"
+                onClick={() => !caseData.customerRating && handleRate(star)}
+                disabled={!!caseData.customerRating}
+                className="text-2xl transition-transform hover:scale-110 disabled:cursor-default disabled:hover:scale-100"
               >
                 <Star className={star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'} />
               </button>

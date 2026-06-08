@@ -158,7 +158,7 @@ export default function AccidentsPage() {
                     {formatDate(c.createdAt, lang)}
                   </p>
                   <div className="mt-2">
-                    <StatusBadge status={c.status as CaseStatus} lang={lang} />
+                    <StatusBadge status={c.status as CaseStatus} />
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
