@@ -17,7 +17,7 @@ export function BottomNav() {
   const { t } = useTranslation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-30 flex h-16 items-center justify-around border-t bg-background">
+    <nav className="sticky bottom-0 left-0 right-0 z-30 flex h-16 items-center justify-around border-t bg-background">
       {navItems.map(({ href, icon: Icon, labelKey }) => {
         const active = pathname.startsWith(href);
         return (
