@@ -41,8 +41,8 @@ export const CASE_STATUS_ORDER: CaseStatus[] = [
 export const TERMINAL_STATUSES: CaseStatus[] = [CaseStatus.CLOSED, CaseStatus.CANCELLED];
 
 export const VALID_TRANSITIONS: Partial<Record<CaseStatus, CaseStatus[]>> = {
-  [CaseStatus.WORKSHOP_SELECTION]:    [CaseStatus.ASSIGNMENT_PENDING],
-  [CaseStatus.ASSIGNMENT_PENDING]:    [CaseStatus.APPOINTMENT_SCHEDULED, CaseStatus.REJECTED_REASSIGN],
+  [CaseStatus.WORKSHOP_SELECTION]:    [CaseStatus.ASSIGNMENT_PENDING, CaseStatus.CANCELLED],
+  [CaseStatus.ASSIGNMENT_PENDING]:    [CaseStatus.APPOINTMENT_SCHEDULED, CaseStatus.REJECTED_REASSIGN, CaseStatus.CANCELLED],
   [CaseStatus.REJECTED_REASSIGN]:     [CaseStatus.ASSIGNMENT_PENDING],
   [CaseStatus.APPOINTMENT_SCHEDULED]: [CaseStatus.VEHICLE_RECEIVED, CaseStatus.CANCELLED],
   [CaseStatus.VEHICLE_RECEIVED]:      [CaseStatus.UNDER_INSPECTION],
